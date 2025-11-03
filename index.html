@@ -298,6 +298,10 @@
             padding: 0.5rem;
             border-radius: 8px;
             transition: background 0.3s ease;
+            /* ensure the button sits above other header elements and is clickable on touch devices */
+            z-index: 1002;
+            pointer-events: auto;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .mobile-menu-btn:hover {
@@ -2718,7 +2722,19 @@
 
         function toggleMobileMenu() {
             const navMenu = document.getElementById('navMenu');
+            const btn = document.querySelector('.mobile-menu-btn');
+            if (!navMenu) return;
             navMenu.classList.toggle('active');
+            // keep aria and button visual state in sync
+            const isOpen = navMenu.classList.contains('active');
+            if (btn) {
+                try {
+                    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                    btn.textContent = isOpen ? '×' : '☰';
+                } catch (e) {
+                    // ignore if DOM mutation fails
+                }
+            }
         }
 
         // Enhanced Quote Form with Email Integration and Validation
@@ -3334,20 +3350,57 @@ ${formData.phone}`;
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9989740002167e79',t:'MTc2MjE0NzU0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 
 <script>
-// Mobile menu toggle
+// Mobile menu toggle (defensive: only attach when elements exist)
 const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
 const navMenu = document.querySelector('.nav-menu');
 
-mobileMenuBtn.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-});
+if (mobileMenuBtn && navMenu) {
+    // handle both click and touchstart for better mobile responsiveness
+    const safeToggle = (e) => {
+        if (e) e.preventDefault && e.preventDefault();
+        // prefer existing global function if present
+        if (typeof window.toggleMobileMenu === 'function') {
+            try { window.toggleMobileMenu(); } catch (err) { /* ignore */ }
+            return;
+        }
+        navMenu.classList.toggle('active');
+        const isOpen = navMenu.classList.contains('active');
+        mobileMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        mobileMenuBtn.textContent = isOpen ? '×' : '☰';
+    };
 
-// Close menu when clicking outside
-document.addEventListener('click', (e) => {
-    if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-        navMenu.classList.remove('active');
-    }
-});
+    mobileMenuBtn.addEventListener('click', safeToggle, { passive: false });
+    mobileMenuBtn.addEventListener('touchstart', safeToggle, { passive: false });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        try {
+            if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navMenu.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenuBtn.textContent = '☰';
+            }
+        } catch (err) {
+            // ignore
+        }
+    });
+
+    // Close menu when a navigation link is clicked (mobile)
+    navMenu.addEventListener('click', (e) => {
+        const a = e.target.closest && e.target.closest('a');
+        if (a && navMenu.classList.contains('active')) {
+            // small timeout to allow any onclick navigation handlers to run
+            setTimeout(() => {
+                navMenu.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenuBtn.textContent = '☰';
+            }, 50);
+        }
+    });
+} else {
+    // graceful fallback: elements missing
+    console.warn('Mobile menu or nav menu element not found.');
+}
 
 // Dropdown menus
 const dropdowns = document.querySelectorAll('.dropdown');
