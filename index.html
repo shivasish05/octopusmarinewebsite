@@ -1,0 +1,3251 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Octopus Supply Chain - Delivering Efficiency Across Every Port</title>
+  <meta name="description" content="Leading logistics and supply chain solutions across India's major ports. Freight forwarding, customs clearance, warehousing, and transportation services.">
+  <meta name="keywords" content="logistics, supply chain, freight forwarding, customs clearance, warehousing, transportation, India ports">
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+        :root {
+            --primary-blue: #1e40af;
+            --secondary-blue: #3b82f6;
+            --accent-orange: #f59e0b;
+            --dark-blue: #1e3a8a;
+            --light-blue: #dbeafe;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --border-gray: #e5e7eb;
+            --success-green: #10b981;
+            --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --gradient-primary: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+            --gradient-secondary: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--white);
+            overflow-x: hidden;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            height: 100%;
+        }
+
+        /* Loading Animation */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--white);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header Styles */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-gray);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 1.5rem; /* reduced header padding to remove excess white space */
+            transition: padding 0.3s ease;
+        }
+
+        .header.scrolled .nav-container {
+            padding: 0.75rem 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .logo-icon {
+            display: none; /* hide emoji fallback when real logo is used */
+        }
+
+        /* Site logo image sizing */
+        .site-logo {
+            max-height: 96px;
+            width: auto;
+            display: block;
+        }
+
+        /* partner logo image helper */
+        .partner-logo-img {
+            max-height: 72px;
+            width: auto;
+            display: block;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+            padding: 0.5rem 0;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-secondary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--gradient-primary);
+            color: var(--white) !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .nav-cta::after {
+            display: none;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+            color: var(--white) !important;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--light-gray);
+        }
+
+        /* Hero Section with Professional Shipping Visuals */
+        .hero {
+            min-height: 100%;
+            background: var(--gradient-primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-text {
+            animation: slideInLeft 1s ease-out;
+        }
+
+        .hero-visual {
+            animation: slideInRight 1s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-tagline {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .btn-primary {
+            background: var(--gradient-secondary);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-large);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Professional Shipping Visual Container */
+        .shipping-visual-container {
+            position: relative;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .shipping-scene {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        .ship-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: shipFloat 4s ease-in-out infinite;
+        }
+
+        .ship-svg {
+            width: 200px;
+            height: 120px;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+        }
+
+        @keyframes shipFloat {
+            0%, 100% { transform: translate(-50%, -50%) rotateY(0deg) rotateX(0deg); }
+            25% { transform: translate(-50%, -55%) rotateY(2deg) rotateX(1deg); }
+            50% { transform: translate(-50%, -45%) rotateY(0deg) rotateX(-1deg); }
+            75% { transform: translate(-50%, -55%) rotateY(-2deg) rotateX(1deg); }
+        }
+
+        .container-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .container-box {
+            position: absolute;
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: containerFloat 6s ease-in-out infinite;
+        }
+
+        .container-box:nth-child(1) {
+            top: 20%;
+            left: 15%;
+            animation-delay: 0s;
+            background: linear-gradient(45deg, #4834d4, #686de0);
+        }
+
+        .container-box:nth-child(2) {
+            top: 30%;
+            right: 20%;
+            animation-delay: 2s;
+            background: linear-gradient(45deg, #00d2d3, #54a0ff);
+        }
+
+        .container-box:nth-child(3) {
+            bottom: 25%;
+            left: 10%;
+            animation-delay: 4s;
+            background: linear-gradient(45deg, #ff9ff3, #f368e0);
+        }
+
+        .container-box:nth-child(4) {
+            bottom: 35%;
+            right: 15%;
+            animation-delay: 1s;
+            background: linear-gradient(45deg, #feca57, #ff9f43);
+        }
+
+        @keyframes containerFloat {
+            0%, 100% { transform: translateY(0px) rotateZ(0deg); }
+            33% { transform: translateY(-15px) rotateZ(2deg); }
+            66% { transform: translateY(10px) rotateZ(-1deg); }
+        }
+
+        .port-crane {
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            width: 80px;
+            height: 150px;
+            animation: craneMove 8s ease-in-out infinite;
+        }
+
+        @keyframes craneMove {
+            0%, 100% { transform: rotateZ(0deg); }
+            50% { transform: rotateZ(5deg); }
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: var(--white);
+            padding: 4rem 2rem;
+            margin-top: -2rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        .stats-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow-large);
+            border: 1px solid var(--border-gray);
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Enhanced About Section */
+        .about-section {
+            padding: 6rem 2rem;
+            background: var(--light-gray);
+        }
+
+        .about-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .about-card {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-gray);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .about-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: left 0.5s ease;
+            z-index: 1;
+            opacity: 0.05;
+        }
+
+        .about-card:hover::before {
+            left: 0;
+        }
+
+        .about-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-large);
+            border-color: var(--primary-blue);
+        }
+
+        .about-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .about-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-card h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .about-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 1.1rem;
+        }
+
+        /* Vision & Mission Section */
+        .vision-mission {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vision-mission::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="2" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23dots)"/></svg>');
+        }
+
+        .vision-mission-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .vision-mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .vision-card, .mission-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .vision-card:hover, .mission-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .vision-card h3, .mission-card h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .vision-card p, .mission-card p {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+
+        /* Enhanced Services Section */
+        .services-section {
+            padding: 6rem 2rem;
+            background: var(--white);
+        }
+
+        .services-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--border-gray);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: left 0.5s ease;
+            z-index: 1;
+            opacity: 0.05;
+        }
+
+        .service-card:hover::before {
+            left: 0;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-large);
+            border-color: var(--primary-blue);
+        }
+
+        .service-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .service-card:hover h3 {
+            color: var(--primary-blue);
+        }
+
+        .service-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .service-features li {
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .service-features li::before {
+            content: '✓';
+            color: var(--success-green);
+            font-weight: bold;
+        }
+
+        /* Trusted Partners Section */
+        .partners-section {
+            padding: 6rem 2rem;
+            background: var(--light-gray);
+            overflow: hidden;
+        }
+
+        .partners-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .partners-slider {
+            display: flex;
+            animation: partnerSlide 30s linear infinite;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .partner-logo {
+            min-width: 200px;
+            height: 100px;
+            background: var(--white);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--border-gray);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .partner-logo::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-secondary);
+        }
+
+        .partner-logo:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-large);
+        }
+
+        @keyframes partnerSlide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Map Section */
+        .map-section {
+            padding: 6rem 2rem;
+            background: var(--white);
+        }
+
+        .map-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .map-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .map-info {
+            padding: 2rem;
+        }
+
+        .map-info h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        .map-info p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .location-details {
+            background: var(--light-gray);
+            padding: 2rem;
+            border-radius: 16px;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .location-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            color: var(--text-dark);
+        }
+
+        .location-icon {
+            font-size: 1.2rem;
+            color: var(--primary-blue);
+        }
+
+        #map, #map-about, #map-contact {
+            height: 400px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-large);
+            border: 1px solid var(--border-gray);
+        }
+
+        /* Page Styles */
+        .page {
+            display: none;
+            min-height: 100%;
+            padding-top: 80px;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .content-section {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* About Page Styles */
+        .about-hero {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        /* Contact & Form Styles */
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .contact-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--border-gray);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-secondary);
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-large);
+        }
+
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow-large);
+            border: 1px solid var(--border-gray);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-gray);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-large);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Success Messages */
+        .success-message {
+            background: var(--success-green);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-dark);
+            color: var(--white);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .footer-section h3 {
+            color: var(--accent-orange);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section p {
+            color: #d1d5db;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: #d1d5db;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+            padding: 0.25rem 0;
+        }
+
+        .footer-section a:hover {
+            color: var(--accent-orange);
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--gradient-primary);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-medium);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-large);
+        }
+
+        /* Modern Live Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            background: var(--gradient-secondary);
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow-large);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: pulse 2s infinite;
+            position: relative;
+        }
+
+        .chat-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.4);
+        }
+
+        .chat-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 70px;
+            left: 0;
+            width: 380px;
+            height: 520px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow-large);
+            border: 1px solid var(--border-gray);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-window.active {
+            display: flex;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .chat-header {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .chat-status {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 280px;
+            min-height: 280px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--light-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .chat-message.user .message-avatar {
+            background: var(--primary-blue);
+            color: white;
+            order: 2;
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-text {
+            background: var(--light-blue);
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: var(--text-dark);
+            max-width: 250px;
+            word-wrap: break-word;
+        }
+
+        .chat-message.user .message-text {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+            padding-left: 1rem;
+        }
+
+        .chat-message.user .message-time {
+            text-align: right;
+            padding-left: 0;
+            padding-right: 1rem;
+        }
+
+        .chat-quick-replies {
+            padding: 0.75rem;
+            border-top: 1px solid var(--border-gray);
+            background: #f8fafc;
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .quick-reply-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .quick-reply-btn {
+            display: block;
+            width: 100%;
+            background: white;
+            border: 1px solid var(--border-gray);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.4rem;
+            text-align: left;
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1.3;
+        }
+
+        .quick-reply-btn:hover {
+            background: var(--light-blue);
+            border-color: var(--primary-blue);
+            transform: translateY(-1px);
+        }
+
+        .quick-reply-btn:last-child {
+            margin-bottom: 0;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 1rem;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--light-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            padding: 0.75rem 1rem;
+            background: var(--light-blue);
+            border-radius: 18px;
+        }
+
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: var(--text-light);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: 0s; }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+
+            .vision-mission-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .map-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: var(--shadow-large);
+                border-top: 1px solid var(--border-gray);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 6rem 1rem 3rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-tagline {
+                font-size: 1.2rem;
+            }
+
+            .hero-description {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content-section {
+                padding: 3rem 1rem;
+            }
+
+            .form-container {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .partners-slider {
+                gap: 2rem;
+            }
+
+            .partner-logo {
+                min-width: 150px;
+                height: 80px;
+                font-size: 1rem;
+            }
+
+            .chat-widget {
+                bottom: 1rem;
+                left: 1rem;
+            }
+
+            .chat-window {
+                width: 320px;
+                height: 450px;
+            }
+
+            .shipping-visual-container {
+                height: 300px;
+            }
+
+            .ship-svg {
+                width: 150px;
+                height: 90px;
+            }
+
+            .container-box {
+                width: 30px;
+                height: 22px;
+            }
+
+            .port-crane {
+                width: 60px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-container {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 5rem 1rem 2rem;
+            }
+
+            .vision-card h3, .mission-card h3 {
+                font-size: 2rem;
+            }
+
+            .chat-window {
+                width: calc(100% - 2rem);
+                height: 400px;
+                left: 1rem;
+                right: 1rem;
+            }
+        }
+
+        /* Animation Classes */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .animate-on-scroll.animated {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading States */
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--white);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+   <div class="loader"></div>
+  </div><!-- Header -->
+    <header class="header" id="header">
+     <nav class="nav-container">
+        <a href="#" class="logo" onclick="showPage('home')">
+         <!-- Main logo image -->
+         <img src="assets/octopus-logo.jpg" alt="Octopus Supply Chain logo" class="site-logo" onerror="this.src='assets/octopus logo.jpeg'; this.onerror=null;" />
+        </a>
+    <ul class="nav-menu" id="navMenu">
+     <li><a href="#" onclick="showPage('home')">Home</a></li>
+     <li><a href="#" onclick="showPage('about')">About</a></li>
+     <li><a href="#" onclick="showPage('services')">Services</a></li>
+     <li><a href="#" onclick="showPage('contact')">Contact</a></li>
+     <li><a href="#" class="nav-cta" onclick="showPage('quote')">Get Quote</a></li>
+    </ul><button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu"> ☰ </button>
+   </nav>
+  </header><!-- Main Content -->
+  <main class="main-content"><!-- Home Page -->
+   <div id="home" class="page active"><!-- Hero Section with Professional Shipping Visuals -->
+    <section class="hero">
+     <div class="hero-content">
+      <div class="hero-text">
+       <div class="hero-tagline" id="tagline">
+        Delivering Efficiency Across Every Port
+       </div>
+       <h1 id="company-name-hero">Octopus Supply Chain</h1>
+       <p class="hero-description" id="hero-description">Your trusted partner for comprehensive logistics solutions across India's major ports. From freight forwarding to end-to-end supply chain management, we ensure your cargo reaches its destination safely and on time.</p>
+       <div class="hero-buttons"><button class="btn-primary" onclick="showPage('quote')"> <span>Request Quote</span> <span>→</span> </button> <button class="btn-secondary" onclick="showPage('services')"> <span>Our Services</span> <span>📋</span> </button>
+       </div>
+      </div>
+      <div class="hero-visual">
+       <div class="shipping-visual-container">
+        <div class="shipping-scene"><!-- Professional Ship SVG -->
+         <div class="ship-container">
+          <svg class="ship-svg" viewbox="0 0 200 120" xmlns="http://www.w3.org/2000/svg"><!-- Ship Hull --> <path d="M20 80 L180 80 L170 95 L30 95 Z" fill="#2563eb" stroke="#1e40af" stroke-width="2" /> <!-- Ship Deck --> <rect x="30" y="60" width="140" height="20" fill="#3b82f6" stroke="#2563eb" stroke-width="1" /> <!-- Containers on Deck --> <rect x="40" y="45" width="15" height="15" fill="#ef4444" stroke="#dc2626" stroke-width="1" /> <rect x="60" y="45" width="15" height="15" fill="#10b981" stroke="#059669" stroke-width="1" /> <rect x="80" y="45" width="15" height="15" fill="#f59e0b" stroke="#d97706" stroke-width="1" /> <rect x="100" y="45" width="15" height="15" fill="#8b5cf6" stroke="#7c3aed" stroke-width="1" /> <rect x="120" y="45" width="15" height="15" fill="#06b6d4" stroke="#0891b2" stroke-width="1" /> <rect x="140" y="45" width="15" height="15" fill="#f97316" stroke="#ea580c" stroke-width="1" /> <!-- Ship Bridge --> <rect x="85" y="30" width="30" height="15" fill="#1e40af" stroke="#1e3a8a" stroke-width="1" /> <!-- Mast --> <line x1="100" y1="30" x2="100" y2="15" stroke="#374151" stroke-width="3" /> <!-- Flag --> <polygon points="100,15 115,20 100,25" fill="#ef4444" /> <!-- Water Waves --> <path d="M0 95 Q25 90 50 95 T100 95 T150 95 T200 95" stroke="#60a5fa" stroke-width="2" fill="none" /> <path d="M0 100 Q25 95 50 100 T100 100 T150 100 T200 100" stroke="#93c5fd" stroke-width="1" fill="none" />
+          </svg>
+         </div><!-- Floating Container Elements -->
+         <div class="container-elements">
+          <div class="container-box"></div>
+          <div class="container-box"></div>
+          <div class="container-box"></div>
+          <div class="container-box"></div>
+         </div><!-- Port Crane SVG -->
+         <div class="port-crane">
+          <svg viewbox="0 0 80 150" xmlns="http://www.w3.org/2000/svg"><!-- Crane Base --> <rect x="35" y="130" width="10" height="20" fill="#374151" /> <!-- Crane Mast --> <rect x="38" y="20" width="4" height="110" fill="#6b7280" /> <!-- Crane Arm --> <rect x="15" y="18" width="50" height="4" fill="#9ca3af" /> <!-- Crane Hook --> <rect x="60" y="22" width="2" height="15" fill="#374151" /> <circle cx="61" cy="39" r="2" fill="#ef4444" /> <!-- Crane Cabin --> <rect x="32" y="35" width="16" height="10" fill="#1e40af" />
+          </svg>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Stats Section -->
+    <section class="stats-section">
+     <div class="stats-container">
+      <div class="stat-card animate-on-scroll"><span class="stat-number" data-target="500">0</span>
+       <div class="stat-label">
+        Happy Clients
+       </div>
+      </div>
+      <div class="stat-card animate-on-scroll"><span class="stat-number" data-target="10000">0</span>
+       <div class="stat-label">
+        Shipments Delivered
+       </div>
+      </div>
+      <div class="stat-card animate-on-scroll"><span class="stat-number" data-target="15">0</span>
+       <div class="stat-label">
+        Years Experience
+       </div>
+      </div>
+      <div class="stat-card animate-on-scroll"><span class="stat-number" data-target="24">0</span>
+       <div class="stat-label">
+        Hours Support
+       </div>
+      </div>
+     </div>
+    </section><!-- Enhanced About Section -->
+    <section class="about-section">
+     <div class="about-container">
+      <div class="section-header animate-on-scroll">
+       <h2 class="section-title">Why Choose Octopus Supply Chain</h2>
+       <p class="section-subtitle">Excellence in logistics with a commitment to innovation and customer satisfaction</p>
+      </div>
+      <div class="about-grid">
+       <div class="about-card animate-on-scroll">
+        <div class="about-content"><span class="about-icon">🏆</span>
+         <h3>Industry Leadership</h3>
+         <p>Over 15 years of excellence in logistics and supply chain management, serving clients across diverse industries with unmatched expertise and reliability.</p>
+        </div>
+       </div>
+       <div class="about-card animate-on-scroll">
+        <div class="about-content"><span class="about-icon">🌐</span>
+         <h3>Global Network</h3>
+         <p>Strategic partnerships with leading logistics providers worldwide, ensuring seamless connectivity and reliable service delivery across international trade routes.</p>
+        </div>
+       </div>
+       <div class="about-card animate-on-scroll">
+        <div class="about-content"><span class="about-icon">💡</span>
+         <h3>Technology Innovation</h3>
+         <p>Cutting-edge technology integration including real-time tracking, automated documentation, and AI-powered route optimization for maximum efficiency.</p>
+        </div>
+       </div>
+       <div class="about-card animate-on-scroll">
+        <div class="about-content"><span class="about-icon">⚓</span>
+         <h3>Port Expertise</h3>
+         <p>Specialized operations across major Indian ports with deep local knowledge and strong relationships built over years of dedicated service.</p>
+        </div>
+       </div>
+       <div class="about-card animate-on-scroll">
+        <div class="about-content"><span class="about-icon">🛡️</span>
+         <h3>Compliance &amp; Security</h3>
+         <p>ISO 9001:2015 certified operations with stringent security protocols and full compliance with international trade regulations and customs requirements.</p>
+        </div>
+       </div>
+       <div class="about-card animate-on-scroll">
+        <div class="about-content"><span class="about-icon">👥</span>
+         <h3>Expert Team</h3>
+         <p>Industry veterans with combined experience of over 50 years in international trade, customs, and logistics operations, ensuring expert guidance for every shipment.</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Vision & Mission Section -->
+    <section class="vision-mission">
+     <div class="vision-mission-container">
+      <div class="section-header animate-on-scroll">
+       <h2 class="section-title" style="color: white;">Our Vision &amp; Mission</h2>
+       <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">Driving the future of logistics with purpose and innovation</p>
+      </div>
+      <div class="vision-mission-grid">
+       <div class="vision-card animate-on-scroll">
+        <h3>🔮 Our Vision</h3>
+        <p>To be India's most trusted and innovative logistics partner, setting new standards in supply chain excellence while enabling businesses to thrive in the global marketplace through seamless, technology-driven solutions that prioritize sustainability and customer success.</p>
+       </div>
+       <div class="mission-card animate-on-scroll">
+        <h3>🎯 Our Mission</h3>
+        <p>To provide comprehensive, efficient, and cost-effective logistics solutions that empower our clients to focus on their core business while we handle their supply chain complexities with precision, care, and unwavering commitment to excellence and innovation.</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Enhanced Services Section -->
+    <section class="services-section">
+     <div class="services-container">
+      <div class="section-header animate-on-scroll">
+       <h2 class="section-title">Our Comprehensive Services</h2>
+       <p class="section-subtitle">End-to-end logistics solutions tailored to your business needs</p>
+      </div>
+      <div class="services-grid">
+       <div class="service-card animate-on-scroll">
+        <div class="service-content"><span class="service-icon">🚢</span>
+         <h3>Freight Forwarding</h3>
+         <p>Comprehensive sea, air, and land freight solutions with real-time tracking, competitive rates, and expert handling of all cargo types.</p>
+         <ul class="service-features">
+          <li>FCL &amp; LCL Sea Freight Services</li>
+          <li>Express &amp; Economy Air Cargo</li>
+          <li>Cross-border Land Transportation</li>
+          <li>Real-time Shipment Tracking</li>
+          <li>Competitive Rate Negotiations</li>
+          <li>Multi-modal Transport Solutions</li>
+         </ul>
+        </div>
+       </div>
+       <div class="service-card animate-on-scroll">
+        <div class="service-content"><span class="service-icon">📋</span>
+         <h3>Customs Clearance</h3>
+         <p>Expert customs brokerage services ensuring smooth and compliant clearance at all major Indian ports with minimal delays.</p>
+         <ul class="service-features">
+          <li>Import/Export Documentation</li>
+          <li>Duty Optimization Strategies</li>
+          <li>Compliance Management</li>
+          <li>License &amp; Permit Assistance</li>
+          <li>Regulatory Advisory Services</li>
+          <li>Fast-track Clearance Options</li>
+         </ul>
+        </div>
+       </div>
+       <div class="service-card animate-on-scroll">
+        <div class="service-content"><span class="service-icon">🏢</span>
+         <h3>Warehousing &amp; Distribution</h3>
+         <p>Secure storage and distribution facilities with advanced inventory management systems and flexible storage solutions.</p>
+         <ul class="service-features">
+          <li>Bonded &amp; Non-bonded Warehouses</li>
+          <li>Advanced Inventory Management</li>
+          <li>Pick, Pack &amp; Ship Services</li>
+          <li>Cross-docking Facilities</li>
+          <li>Temperature-controlled Storage</li>
+          <li>Value-added Services</li>
+         </ul>
+        </div>
+       </div>
+       <div class="service-card animate-on-scroll">
+        <div class="service-content"><span class="service-icon">🚛</span>
+         <h3>Transportation Services</h3>
+         <p>Reliable door-to-door delivery services with our extensive network of trusted transport partners and specialized vehicles.</p>
+         <ul class="service-features">
+          <li>Last-mile Delivery Solutions</li>
+          <li>Container Transportation</li>
+          <li>Project Cargo Handling</li>
+          <li>Specialized Vehicle Fleet</li>
+          <li>Route Optimization</li>
+          <li>GPS Tracking &amp; Monitoring</li>
+         </ul>
+        </div>
+       </div>
+       <div class="service-card animate-on-scroll">
+        <div class="service-content"><span class="service-icon">💼</span>
+         <h3>Supply Chain Consulting</h3>
+         <p>Strategic consulting services to optimize your supply chain operations, reduce costs, and improve efficiency through expert analysis.</p>
+         <ul class="service-features">
+          <li>Supply Chain Analysis</li>
+          <li>Process Optimization</li>
+          <li>Cost Reduction Strategies</li>
+          <li>Risk Management Planning</li>
+          <li>Technology Integration</li>
+          <li>Performance Metrics &amp; KPIs</li>
+         </ul>
+        </div>
+       </div>
+       <div class="service-card animate-on-scroll">
+        <div class="service-content"><span class="service-icon">🔗</span>
+         <h3>End-to-End Solutions</h3>
+         <p>Complete supply chain management from procurement to delivery, providing seamless integration and comprehensive oversight.</p>
+         <ul class="service-features">
+          <li>Vendor Management</li>
+          <li>Procurement Support</li>
+          <li>Quality Control &amp; Inspection</li>
+          <li>Documentation Management</li>
+          <li>Insurance &amp; Risk Coverage</li>
+          <li>24/7 Customer Support</li>
+         </ul>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Trusted Partners Section -->
+    <section class="partners-section">
+     <div class="partners-container">
+      <div class="section-header animate-on-scroll">
+       <h2 class="section-title">Our Trusted Partners</h2>
+       <p class="section-subtitle">Collaborating with industry leaders to deliver exceptional service</p>
+      </div>
+    <div class="partners-slider">
+     <!-- Official partner logos with clickable links -->
+     <a href="https://www.maersk.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/maersk.svg" alt="Maersk Line" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.skycargo.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/emirates.svg" alt="Emirates SkyCargo" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.dhl.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/dhl.svg" alt="DHL Global" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.bluedart.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/blue-dart.svg" alt="Blue Dart Express" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.jnport.gov.in/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/jnpt.svg" alt="JNPT Port Trust" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.msc.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/msc.svg" alt="MSC Shipping" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.fedex.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/fedex.svg" alt="FedEx Express" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.adaniports.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/adani.svg" alt="Adani Ports" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.cma-cgm.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/cma-cgm.svg" alt="CMA CGM Group" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.lufthansa-cargo.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/lufthansa.svg" alt="Lufthansa Cargo" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.ups.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/ups.svg" alt="UPS Supply Chain" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.vrlgroup.in/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/vrl.svg" alt="VRL Logistics" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <!-- duplicates for smooth loop -->
+     <a href="https://www.maersk.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/maersk.svg" alt="Maersk Line" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.skycargo.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/emirates.svg" alt="Emirates SkyCargo" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.dhl.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/dhl.svg" alt="DHL Global" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.bluedart.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/blue-dart.svg" alt="Blue Dart Express" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.jnport.gov.in/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/jnpt.svg" alt="JNPT Port Trust" class="partner-logo-img" loading="lazy"/>
+     </a>
+     <a href="https://www.msc.com/" target="_blank" rel="noopener" class="partner-logo">
+      <img src="assets/partners/msc.svg" alt="MSC Shipping" class="partner-logo-img" loading="lazy"/>
+     </a>
+    </div>
+     </div>
+    </section><!-- Map Section -->
+    <section class="map-section">
+     <div class="map-container">
+      <div class="section-header animate-on-scroll">
+       <h2 class="section-title">Find Us</h2>
+       <p class="section-subtitle">Visit our headquarters in the heart of India's logistics hub</p>
+      </div>
+      <div class="map-content">
+       <div class="map-info animate-on-scroll">
+        <h3>Our Location</h3>
+        <p>Strategically located in Rajula, Gujarat, we provide comprehensive logistics solutions with excellent connectivity to major ports and transportation networks across India.</p>
+        <div class="location-details">
+         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-map">Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN</span>
+         </div>
+         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-map">+91 98765 43210</span>
+         </div>
+         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-map">info@octopussupplychain.com</span>
+         </div>
+         <div class="location-item"><span class="location-icon">🕒</span> <span>Mon-Sat: 9:00 AM - 6:00 PM</span>
+         </div>
+        </div>
+       </div>
+       <div class="animate-on-scroll">
+        <div id="map"></div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </div><!-- About Page -->
+   <div id="about" class="page">
+    <div class="about-hero">
+     <div class="content-section">
+      <h1 class="section-title" style="color: white; margin-bottom: 1rem;">About Octopus Supply Chain</h1>
+      <p style="font-size: 1.2rem; opacity: 0.9; max-width: 800px; margin: 0 auto;">With over a decade of experience in logistics and supply chain management, we've established ourselves as India's most trusted logistics partner.</p>
+     </div>
+    </div><!-- Vision & Mission Section -->
+    <section class="vision-mission">
+     <div class="vision-mission-container">
+      <div class="section-header animate-on-scroll">
+       <h2 class="section-title" style="color: white;">Our Vision &amp; Mission</h2>
+       <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">Driving the future of logistics with purpose and innovation</p>
+      </div>
+      <div class="vision-mission-grid">
+       <div class="vision-card animate-on-scroll">
+        <h3>🔮 Our Vision</h3>
+        <p>To be India's most trusted and innovative logistics partner, setting new standards in supply chain excellence while enabling businesses to thrive in the global marketplace through seamless, technology-driven solutions that prioritize sustainability and customer success.</p>
+       </div>
+       <div class="mission-card animate-on-scroll">
+        <h3>🎯 Our Mission</h3>
+        <p>To provide comprehensive, efficient, and cost-effective logistics solutions that empower our clients to focus on their core business while we handle their supply chain complexities with precision, care, and unwavering commitment to excellence and innovation.</p>
+       </div>
+      </div>
+     </div>
+    </section>
+    <section class="content-section">
+     <div class="about-grid">
+      <div class="about-card animate-on-scroll">
+       <div class="about-content"><span class="about-icon">🏆</span>
+        <h3>Industry Leadership</h3>
+        <p>Over 15 years of excellence in logistics and supply chain management, serving clients across diverse industries with unmatched expertise and reliability. Our track record speaks for itself with over 10,000 successful shipments delivered.</p>
+       </div>
+      </div>
+      <div class="about-card animate-on-scroll">
+       <div class="about-content"><span class="about-icon">🌐</span>
+        <h3>Global Network</h3>
+        <p>Strategic partnerships with leading logistics providers worldwide, ensuring seamless connectivity and reliable service delivery across international trade routes. We connect India to over 150 countries worldwide.</p>
+       </div>
+      </div>
+      <div class="about-card animate-on-scroll">
+       <div class="about-content"><span class="about-icon">💡</span>
+        <h3>Technology Innovation</h3>
+        <p>Cutting-edge technology integration including real-time tracking, automated documentation, and AI-powered route optimization for maximum efficiency and transparency in all operations.</p>
+       </div>
+      </div>
+      <div class="about-card animate-on-scroll">
+       <div class="about-content"><span class="about-icon">⚓</span>
+        <h3>Port Expertise</h3>
+        <p>Specialized operations across major Indian ports including Mumbai (JNPT), Chennai, Kolkata, Kandla, and Cochin with deep local knowledge and strong relationships built over years of dedicated service.</p>
+       </div>
+      </div>
+      <div class="about-card animate-on-scroll">
+       <div class="about-content"><span class="about-icon">🛡️</span>
+        <h3>Compliance &amp; Security</h3>
+        <p>ISO 9001:2015 certified operations with stringent security protocols and full compliance with international trade regulations, customs requirements, and industry best practices.</p>
+       </div>
+      </div>
+      <div class="about-card animate-on-scroll">
+       <div class="about-content"><span class="about-icon">👥</span>
+        <h3>Expert Team</h3>
+        <p>Industry veterans with combined experience of over 50 years in international trade, customs, and logistics operations, ensuring expert guidance and personalized service for every client and shipment.</p>
+       </div>
+      </div>
+     </div>
+    </section><!-- Map Section -->
+    <section class="map-section">
+     <div class="map-container">
+      <div class="section-header animate-on-scroll">
+       <h2 class="section-title">Visit Our Headquarters</h2>
+       <p class="section-subtitle">Located in the heart of India's logistics hub</p>
+      </div>
+      <div class="map-content">
+       <div class="map-info animate-on-scroll">
+        <h3>Strategic Location</h3>
+        <p>Our headquarters in Rajula, Gujarat provides strategic access to India's major ports and transportation networks, enabling us to serve our clients with maximum efficiency and minimal transit times.</p>
+        <div class="location-details">
+         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-about">Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN</span>
+         </div>
+         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-about">+91 98765 43210</span>
+         </div>
+         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-about">info@octopussupplychain.com</span>
+         </div>
+         <div class="location-item"><span class="location-icon">🕒</span> <span>Mon-Sat: 9:00 AM - 6:00 PM</span>
+         </div>
+        </div>
+       </div>
+       <div class="animate-on-scroll">
+        <div id="map-about"></div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </div><!-- Services Page -->
+   <div id="services" class="page">
+    <div class="about-hero">
+     <div class="content-section">
+      <h1 class="section-title" style="color: white; margin-bottom: 1rem;">Our Services</h1>
+      <p style="font-size: 1.2rem; opacity: 0.9; max-width: 800px; margin: 0 auto;">Comprehensive logistics solutions designed to streamline your supply chain operations</p>
+     </div>
+    </div>
+    <section class="content-section">
+     <div class="services-grid">
+      <div class="service-card animate-on-scroll">
+       <div class="service-content"><span class="service-icon">🚢</span>
+        <h3>Freight Forwarding</h3>
+        <p>Comprehensive sea, air, and land freight solutions with real-time tracking, competitive rates, and expert handling of all cargo types.</p>
+        <ul class="service-features">
+         <li>FCL &amp; LCL Sea Freight Services</li>
+         <li>Express &amp; Economy Air Cargo</li>
+         <li>Cross-border Land Transportation</li>
+         <li>Real-time Shipment Tracking</li>
+         <li>Competitive Rate Negotiations</li>
+         <li>Multi-modal Transport Solutions</li>
+         <li>Specialized Cargo Handling</li>
+         <li>Route Optimization Services</li>
+        </ul>
+       </div>
+      </div>
+      <div class="service-card animate-on-scroll">
+       <div class="service-content"><span class="service-icon">📋</span>
+        <h3>Customs Clearance</h3>
+        <p>Expert customs brokerage services ensuring smooth and compliant clearance at all major Indian ports with minimal delays.</p>
+        <ul class="service-features">
+         <li>Import/Export Documentation</li>
+         <li>Duty Optimization Strategies</li>
+         <li>Compliance Management</li>
+         <li>License &amp; Permit Assistance</li>
+         <li>Regulatory Advisory Services</li>
+         <li>Fast-track Clearance Options</li>
+         <li>Tariff Classification Support</li>
+         <li>Audit &amp; Risk Management</li>
+        </ul>
+       </div>
+      </div>
+      <div class="service-card animate-on-scroll">
+       <div class="service-content"><span class="service-icon">🏢</span>
+        <h3>Warehousing &amp; Distribution</h3>
+        <p>Secure storage and distribution facilities with advanced inventory management systems and flexible storage solutions.</p>
+        <ul class="service-features">
+         <li>Bonded &amp; Non-bonded Warehouses</li>
+         <li>Advanced Inventory Management</li>
+         <li>Pick, Pack &amp; Ship Services</li>
+         <li>Cross-docking Facilities</li>
+         <li>Temperature-controlled Storage</li>
+         <li>Value-added Services</li>
+         <li>Quality Control &amp; Inspection</li>
+         <li>Kitting &amp; Assembly Services</li>
+        </ul>
+       </div>
+      </div>
+      <div class="service-card animate-on-scroll">
+       <div class="service-content"><span class="service-icon">🚛</span>
+        <h3>Transportation Services</h3>
+        <p>Reliable door-to-door delivery services with our extensive network of trusted transport partners and specialized vehicles.</p>
+        <ul class="service-features">
+         <li>Last-mile Delivery Solutions</li>
+         <li>Container Transportation</li>
+         <li>Project Cargo Handling</li>
+         <li>Specialized Vehicle Fleet</li>
+         <li>Route Optimization</li>
+         <li>GPS Tracking &amp; Monitoring</li>
+         <li>Express Delivery Options</li>
+         <li>Bulk Cargo Transportation</li>
+        </ul>
+       </div>
+      </div>
+      <div class="service-card animate-on-scroll">
+       <div class="service-content"><span class="service-icon">💼</span>
+        <h3>Supply Chain Consulting</h3>
+        <p>Strategic consulting services to optimize your supply chain operations, reduce costs, and improve efficiency through expert analysis.</p>
+        <ul class="service-features">
+         <li>Supply Chain Analysis</li>
+         <li>Process Optimization</li>
+         <li>Cost Reduction Strategies</li>
+         <li>Risk Management Planning</li>
+         <li>Technology Integration</li>
+         <li>Performance Metrics &amp; KPIs</li>
+         <li>Vendor Management</li>
+         <li>Digital Transformation</li>
+        </ul>
+       </div>
+      </div>
+      <div class="service-card animate-on-scroll">
+       <div class="service-content"><span class="service-icon">🔗</span>
+        <h3>End-to-End Solutions</h3>
+        <p>Complete supply chain management from procurement to delivery, providing seamless integration and comprehensive oversight.</p>
+        <ul class="service-features">
+         <li>Procurement Support</li>
+         <li>Vendor Management</li>
+         <li>Quality Control &amp; Inspection</li>
+         <li>Documentation Management</li>
+         <li>Insurance &amp; Risk Coverage</li>
+         <li>24/7 Customer Support</li>
+         <li>Performance Analytics</li>
+         <li>Continuous Improvement</li>
+        </ul>
+       </div>
+      </div>
+     </div>
+    </section>
+   </div><!-- Contact Page -->
+   <div id="contact" class="page">
+    <div class="about-hero">
+     <div class="content-section">
+      <h1 class="section-title" style="color: white; margin-bottom: 1rem;">Contact Us</h1>
+      <p style="font-size: 1.2rem; opacity: 0.9; max-width: 800px; margin: 0 auto;">Get in touch with our logistics experts for personalized solutions</p>
+     </div>
+    </div>
+    <section class="content-section">
+     <div class="contact-info">
+      <div class="contact-card animate-on-scroll"><span class="contact-icon">📧</span>
+       <h3>Email Us</h3>
+       <p id="contact-email-display">info@octopussupplychain.com</p>
+       <p style="color: var(--text-light); font-size: 0.9rem;">We respond within 2 hours</p>
+      </div>
+      <div class="contact-card animate-on-scroll"><span class="contact-icon">📞</span>
+       <h3>Call Us</h3>
+       <p id="contact-phone-display">+91 98765 43210</p>
+       <p style="color: var(--text-light); font-size: 0.9rem;">24/7 Customer Support</p>
+      </div>
+      <div class="contact-card animate-on-scroll"><span class="contact-icon">📍</span>
+       <h3>Visit Us</h3>
+       <p id="office-address-display">Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN</p>
+       <p style="color: var(--text-light); font-size: 0.9rem;">Mon-Sat: 9AM-6PM</p>
+      </div>
+     </div>
+     <div class="form-container animate-on-scroll">
+      <h3 style="text-align: center; margin-bottom: 2rem; color: var(--text-dark);">Send us a Message</h3>
+      <div class="success-message" id="contactSuccess">
+       ✅ Thank you for your message! We'll get back to you within 24 hours.
+      </div>
+      <form id="contactForm" onsubmit="submitContactForm(event)">
+       <div class="form-group"><label for="contactName">Full Name *</label> <input type="text" id="contactName" name="name" required placeholder="Enter your full name">
+       </div>
+       <div class="form-group"><label for="contactEmail">Email Address *</label> <input type="email" id="contactEmail" name="email" required placeholder="your.email@company.com">
+       </div>
+       <div class="form-group"><label for="contactCompany">Company Name</label> <input type="text" id="contactCompany" name="company" placeholder="Your company name">
+       </div>
+       <div class="form-group"><label for="contactSubject">Subject *</label> <input type="text" id="contactSubject" name="subject" required placeholder="Brief subject of your inquiry">
+       </div>
+       <div class="form-group"><label for="contactMessage">Message *</label> <textarea id="contactMessage" name="message" required placeholder="Tell us about your logistics needs, timeline, and any specific requirements..."></textarea>
+       </div><button type="submit" class="submit-btn" id="contactSubmitBtn"> Send Message </button>
+      </form>
+     </div>
+    </section><!-- Map Section -->
+    <section class="map-section">
+     <div class="map-container">
+      <div class="section-header animate-on-scroll">
+       <h2 class="section-title">Find Us</h2>
+       <p class="section-subtitle">Visit our headquarters in the heart of India's logistics hub</p>
+      </div>
+      <div class="map-content">
+       <div class="map-info animate-on-scroll">
+        <h3>Our Location</h3>
+        <p>Strategically located in Rajula, Gujarat, we provide comprehensive logistics solutions with excellent connectivity to major ports and transportation networks across India.</p>
+        <div class="location-details">
+         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-contact">Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN</span>
+         </div>
+         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-contact">+91 98765 43210</span>
+         </div>
+         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-contact">info@octopussupplychain.com</span>
+         </div>
+         <div class="location-item"><span class="location-icon">🕒</span> <span>Mon-Sat: 9:00 AM - 6:00 PM</span>
+         </div>
+        </div>
+       </div>
+       <div class="animate-on-scroll">
+        <div id="map-contact"></div>
+       </div>
+      </div>
+     </div>
+    </section>
+   </div><!-- Quote Page -->
+   <div id="quote" class="page">
+    <div class="about-hero">
+     <div class="content-section">
+      <h1 class="section-title" style="color: white; margin-bottom: 1rem;">Get a Quote</h1>
+      <p style="font-size: 1.2rem; opacity: 0.9; max-width: 800px; margin: 0 auto;">Fill out the form below and our team will provide you with a competitive quote within 24 hours</p>
+     </div>
+    </div>
+    <section class="content-section">
+     <div class="form-container animate-on-scroll">
+      <div class="success-message" id="quoteSuccess">
+       ✅ Thank you for your quote request! Your email client will open with a pre-filled message.
+      </div>
+      <form id="quoteForm" onsubmit="submitQuoteForm(event)">
+       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group"><label for="quoteName">Full Name *</label> <input type="text" id="quoteName" name="name" required placeholder="Enter your full name">
+        </div>
+        <div class="form-group"><label for="quoteEmail">Email Address *</label> <input type="email" id="quoteEmail" name="email" required placeholder="your.email@company.com">
+        </div>
+       </div>
+       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group"><label for="quoteCompany">Company Name *</label> <input type="text" id="quoteCompany" name="company" required placeholder="Your company name">
+        </div>
+        <div class="form-group"><label for="quotePhone">Phone Number *</label> <input type="tel" id="quotePhone" name="phone" required placeholder="+91 98765 43210">
+        </div>
+       </div>
+       <div class="form-group"><label for="quoteService">Type of Service *</label> <select id="quoteService" name="service" required> <option value="">Select a service</option> <option value="freight-forwarding">Freight Forwarding</option> <option value="customs-clearance">Customs Clearance</option> <option value="warehousing">Warehousing &amp; Distribution</option> <option value="transportation">Transportation</option> <option value="consultancy">Supply Chain Consulting</option> <option value="end-to-end">End-to-End Solutions</option> </select>
+       </div>
+       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group"><label for="quoteOrigin">Origin *</label> <input type="text" id="quoteOrigin" name="origin" required placeholder="e.g., Mumbai, India">
+        </div>
+        <div class="form-group"><label for="quoteDestination">Destination *</label> <input type="text" id="quoteDestination" name="destination" required placeholder="e.g., Dubai, UAE">
+        </div>
+       </div>
+       <div class="form-group"><label for="quoteCargo">Cargo Details *</label> <textarea id="quoteCargo" name="cargo" required placeholder="Describe your cargo: type, weight, dimensions, quantity, packaging requirements, etc."></textarea>
+       </div>
+       <div class="form-group"><label for="quoteMessage">Additional Requirements</label> <textarea id="quoteMessage" name="message" placeholder="Any special requirements, timeline, insurance needs, or additional information..."></textarea>
+       </div><button type="submit" class="submit-btn" id="quoteSubmitBtn"> Request Quote via Email </button>
+      </form>
+     </div>
+    </section>
+   </div>
+  </main><!-- Footer -->
+  <footer class="footer">
+   <div class="footer-content">
+    <div class="footer-section">
+     <h3>Octopus Supply Chain</h3>
+     <p>Your trusted logistics partner delivering efficiency across every port in India and beyond. We make global trade simple, reliable, and cost-effective.</p>
+     <div style="margin-top: 1.5rem;">
+      <p style="color: var(--accent-orange); font-weight: 600;">🏆 ISO 9001:2015 Certified</p>
+      <p style="color: var(--accent-orange); font-weight: 600;">🌟 15+ Years of Excellence</p>
+     </div>
+    </div>
+    <div class="footer-section">
+     <h3>Quick Links</h3><a href="#" onclick="showPage('home')">🏠 Home</a> <a href="#" onclick="showPage('about')">ℹ️ About Us</a> <a href="#" onclick="showPage('services')">🚀 Services</a> <a href="#" onclick="showPage('contact')">📞 Contact</a> <a href="#" onclick="showPage('quote')">💼 Get Quote</a>
+    </div>
+    <div class="footer-section">
+     <h3>Our Services</h3><a href="#" onclick="showPage('services')">🚢 Freight Forwarding</a> <a href="#" onclick="showPage('services')">📋 Customs Clearance</a> <a href="#" onclick="showPage('services')">🏢 Warehousing</a> <a href="#" onclick="showPage('services')">🚛 Transportation</a> <a href="#" onclick="showPage('services')">💼 Consultancy</a>
+    </div>
+    <div class="footer-section">
+     <h3>Contact Info</h3>
+     <p>📧 info@octopussupplychain.com</p>
+     <p>📞 +91 98765 43210</p>
+     <p>📍 Rajula, Gujarat</p>
+     <div style="margin-top: 1.5rem;">
+      <p style="color: var(--accent-orange); font-weight: 600;">🕒 24/7 Customer Support</p>
+      <p style="color: var(--accent-orange); font-weight: 600;">⚡ 2-Hour Response Time</p>
+     </div>
+    </div>
+   </div>
+   <div class="footer-bottom">
+    <p>© 2024 Octopus Supply Chain. All rights reserved. | Privacy Policy | Terms of Service</p>
+   </div>
+  </footer><!-- Modern Live Chat Widget -->
+  <div class="chat-widget"><button class="chat-button" id="chatButton" onclick="toggleChat()"> <span class="chat-icon">💬</span> <span class="chat-text">Live Support</span> <span class="chat-badge" id="chatBadge">1</span> </button>
+   <div class="chat-window" id="chatWindow">
+    <div class="chat-header">
+     <div class="chat-header-info">
+      <div class="chat-avatar">
+       🐙
+      </div>
+      <div><strong>Octopus Support</strong>
+       <div class="chat-status"><span class="status-dot"></span> Online now
+       </div>
+      </div>
+     </div><button class="chat-close" onclick="toggleChat()" aria-label="Close chat">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+     <div class="chat-message bot">
+      <div class="message-avatar">
+       🐙
+      </div>
+      <div class="message-content">
+       <div class="message-text">
+        👋 Hello! I'm here to help with your logistics needs. What would you like to know?
+       </div>
+       <div class="message-time">
+        Just now
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="chat-quick-replies" id="chatQuickReplies">
+     <div class="quick-reply-title">
+      Quick Questions:
+     </div><button class="quick-reply-btn" onclick="sendQuickMessage('Get a shipping quote')"> 💰 Get a shipping quote </button> <button class="quick-reply-btn" onclick="sendQuickMessage('Track my shipment')"> 📦 Track my shipment </button> <button class="quick-reply-btn" onclick="sendQuickMessage('Port information')"> ⚓ Port information </button> <button class="quick-reply-btn" onclick="sendQuickMessage('Customs clearance help')"> 📋 Customs clearance help </button> <button class="quick-reply-btn" onclick="sendQuickMessage('Contact information')"> 📞 Contact information </button> <button class="quick-reply-btn" onclick="sendQuickMessage('Our services')"> 🚢 Our services </button>
+    </div>
+    <div class="typing-indicator" id="typingIndicator">
+     <div class="typing-avatar">
+      🐙
+     </div>
+     <div class="typing-dots"><span></span> <span></span> <span></span>
+     </div>
+    </div>
+   </div>
+  </div><!-- Scroll to Top Button --> <button class="scroll-top" id="scrollTopBtn" onclick="scrollToTop()" aria-label="Scroll to top"> ↑ </button>
+  <script>
+        // Configuration object for editable content
+        const defaultConfig = {
+            company_name: "Octopus Supply Chain",
+            tagline: "Delivering Efficiency Across Every Port",
+            hero_description: "Your trusted partner for comprehensive logistics solutions across India's major ports. From freight forwarding to end-to-end supply chain management, we ensure your cargo reaches its destination safely and on time.",
+            contact_email: "info@octopussupplychain.com",
+            contact_phone: "+91 98765 43210",
+            office_address: "Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN"
+        };
+
+        // Global map variables
+        let map, mapAbout, mapContact;
+
+        // Loading screen
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1000);
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+
+            // Show/hide scroll to top button
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            if (scrollTop > 500) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        // Scroll to top function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Initialize Maps with better error handling
+        function initializeMaps() {
+            try {
+                // Coordinates for Rajula, Gujarat
+                const coords = [21.0347, 71.4418];
+                const popupContent = '<b>Octopus Supply Chain</b><br>Manmandir Residency, Chhatdiya Road Rajula<br>Rajula, Gujarat, India';
+                
+                // Initialize main map (home page)
+                const mapElement = document.getElementById('map');
+                if (mapElement && !map) {
+                    try {
+                        map = L.map('map').setView(coords, 13);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors',
+                            maxZoom: 18,
+                            timeout: 10000
+                        }).addTo(map);
+                        
+                        L.marker(coords).addTo(map)
+                            .bindPopup(popupContent)
+                            .openPopup();
+                    } catch (error) {
+                        mapElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Manmandir Residency, Chhatdiya Road Rajula<br>Rajula, Gujarat, India</div></div></div>';
+                    }
+                }
+                
+                // Initialize about page map
+                const mapAboutElement = document.getElementById('map-about');
+                if (mapAboutElement && !mapAbout) {
+                    try {
+                        mapAbout = L.map('map-about').setView(coords, 13);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors',
+                            maxZoom: 18,
+                            timeout: 10000
+                        }).addTo(mapAbout);
+                        
+                        L.marker(coords).addTo(mapAbout)
+                            .bindPopup(popupContent)
+                            .openPopup();
+                    } catch (error) {
+                        mapAboutElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Manmandir Residency, Chhatdiya Road Rajula<br>Rajula, Gujarat, India</div></div></div>';
+                    }
+                }
+                
+                // Initialize contact page map with proper visibility check
+                const mapContactElement = document.getElementById('map-contact');
+                if (mapContactElement && !mapContact) {
+                    try {
+                        // Check if the contact page is currently active
+                        const contactPage = document.getElementById('contact');
+                        const isContactPageActive = contactPage && contactPage.classList.contains('active');
+                        
+                        mapContact = L.map('map-contact').setView(coords, 13);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors',
+                            maxZoom: 18,
+                            timeout: 10000
+                        }).addTo(mapContact);
+                        
+                        L.marker(coords).addTo(mapContact)
+                            .bindPopup(popupContent)
+                            .openPopup();
+                            
+                        // Force map to resize if contact page is active
+                        if (isContactPageActive) {
+                            setTimeout(() => {
+                                mapContact.invalidateSize();
+                            }, 100);
+                        }
+                    } catch (error) {
+                        mapContactElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Manmandir Residency, Chhatdiya Road Rajula<br>Rajula, Gujarat, India</div></div></div>';
+                    }
+                }
+            } catch (error) {
+                console.error('Maps initialization error:', error);
+            }
+        }
+
+        // Force map resize when switching to pages with maps
+        function resizeMapForPage(pageId) {
+            setTimeout(() => {
+                try {
+                    if (pageId === 'home' && map) {
+                        map.invalidateSize();
+                    } else if (pageId === 'about' && mapAbout) {
+                        mapAbout.invalidateSize();
+                    } else if (pageId === 'contact' && mapContact) {
+                        mapContact.invalidateSize();
+                    }
+                } catch (error) {
+                    console.error('Map resize error:', error);
+                }
+            }, 200);
+        }
+
+        // Animate on scroll
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            const windowHeight = window.innerHeight;
+            
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('animated');
+                }
+            });
+        }
+
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const increment = target / 100;
+                let current = 0;
+                
+                const updateCounter = () => {
+                    if (current < target) {
+                        current += increment;
+                        counter.textContent = Math.ceil(current);
+                        setTimeout(updateCounter, 20);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                // Start animation when element is visible
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            updateCounter();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+                
+                observer.observe(counter);
+            });
+        }
+
+        // Navigation functionality
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            
+            // Close mobile menu if open
+            document.getElementById('navMenu').classList.remove('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Initialize maps when needed
+            setTimeout(() => {
+                if (pageId === 'home' || pageId === 'about' || pageId === 'contact') {
+                    initializeMaps();
+                    // Force map resize for the current page
+                    resizeMapForPage(pageId);
+                }
+                animateOnScroll();
+            }, 100);
+        }
+
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Enhanced Quote Form with Email Integration and Validation
+        function submitQuoteForm(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('quoteForm');
+            const submitBtn = document.getElementById('quoteSubmitBtn');
+            const originalText = submitBtn.textContent;
+            
+            // Validate form
+            if (!validateForm(form)) {
+                showNotification('Please fill in all required fields correctly.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Opening Email...';
+            
+            try {
+                // Get form data
+                const formData = {
+                    name: document.getElementById('quoteName').value.trim(),
+                    email: document.getElementById('quoteEmail').value.trim(),
+                    company: document.getElementById('quoteCompany').value.trim(),
+                    phone: document.getElementById('quotePhone').value.trim(),
+                    service: document.getElementById('quoteService').value,
+                    origin: document.getElementById('quoteOrigin').value.trim(),
+                    destination: document.getElementById('quoteDestination').value.trim(),
+                    cargo: document.getElementById('quoteCargo').value.trim(),
+                    message: document.getElementById('quoteMessage').value.trim()
+                };
+                
+                // Create email content
+                const emailSubject = `Quote Request from ${formData.company} - ${formData.service}`;
+                const emailBody = `Dear Octopus Supply Chain Team,
+
+I am writing to request a quote for logistics services. Please find my details below:
+
+CONTACT INFORMATION:
+• Name: ${formData.name}
+• Company: ${formData.company}
+• Email: ${formData.email}
+• Phone: ${formData.phone}
+
+SHIPMENT DETAILS:
+• Service Type: ${formData.service}
+• Origin: ${formData.origin}
+• Destination: ${formData.destination}
+
+CARGO INFORMATION:
+${formData.cargo}
+
+ADDITIONAL REQUIREMENTS:
+${formData.message || 'None specified'}
+
+Please provide a detailed quote including:
+- Freight charges
+- Documentation fees
+- Insurance costs
+- Transit time
+- Any additional services required
+
+I look forward to your prompt response.
+
+Best regards,
+${formData.name}
+${formData.company}
+${formData.phone}`;
+
+                // Create mailto link
+                const mailtoLink = `mailto:${defaultConfig.contact_email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+                
+                // Simulate processing time
+                setTimeout(() => {
+                    try {
+                        // Open email client
+                        window.open(mailtoLink, '_blank');
+                        
+                        // Show success message
+                        document.getElementById('quoteSuccess').style.display = 'block';
+                        
+                        // Reset form
+                        form.reset();
+                        
+                        // Reset button
+                        submitBtn.classList.remove('loading');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                        
+                        // Hide success message after 5 seconds
+                        setTimeout(() => {
+                            document.getElementById('quoteSuccess').style.display = 'none';
+                        }, 5000);
+                        
+                        // Show success notification
+                        showNotification('Quote request prepared! Your email client should open shortly.', 'success');
+                        
+                    } catch (error) {
+                        console.error('Error opening email client:', error);
+                        showNotification('Unable to open email client. Please copy the contact information manually.', 'error');
+                        
+                        // Reset button
+                        submitBtn.classList.remove('loading');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Form submission error:', error);
+                showNotification('An error occurred while processing your request. Please try again.', 'error');
+                
+                // Reset button
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        // Enhanced Contact Form with validation
+        function submitContactForm(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('contactForm');
+            const submitBtn = document.getElementById('contactSubmitBtn');
+            const originalText = submitBtn.textContent;
+            
+            // Validate form
+            if (!validateForm(form)) {
+                showNotification('Please fill in all required fields correctly.', 'error');
+                return;
+            }
+            
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            
+            try {
+                // Simulate API call
+                setTimeout(() => {
+                    // Show success message
+                    document.getElementById('contactSuccess').style.display = 'block';
+                    
+                    // Reset form
+                    form.reset();
+                    
+                    // Reset button
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        document.getElementById('contactSuccess').style.display = 'none';
+                    }, 5000);
+                    
+                    // Show success notification
+                    showNotification('Message sent successfully! We\'ll get back to you within 24 hours.', 'success');
+                    
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Contact form error:', error);
+                showNotification('Failed to send message. Please try again or contact us directly.', 'error');
+                
+                // Reset button
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">${type === 'success' ? '✅' : '⚠️'}</span>
+                    <span class="notification-text">${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">✕</button>
+                </div>
+            `;
+            
+            // Add styles if not already present
+            if (!document.querySelector('.notification-styles')) {
+                const styles = document.createElement('style');
+                styles.className = 'notification-styles';
+                styles.textContent = `
+                    .notification {
+                        position: fixed;
+                        top: 20px;
+                        right: 20px;
+                        border-radius: 12px;
+                        padding: 1rem;
+                        box-shadow: var(--shadow-large);
+                        z-index: 10000;
+                        animation: slideInRight 0.3s ease-out;
+                        max-width: 400px;
+                    }
+                    .notification-success {
+                        background: #d1fae5;
+                        border: 1px solid #a7f3d0;
+                    }
+                    .notification-error {
+                        background: #fee2e2;
+                        border: 1px solid #fecaca;
+                    }
+                    .notification-content {
+                        display: flex;
+                        align-items: center;
+                        gap: 0.75rem;
+                    }
+                    .notification-icon {
+                        font-size: 1.2rem;
+                    }
+                    .notification-text {
+                        flex: 1;
+                        font-weight: 500;
+                    }
+                    .notification-success .notification-text {
+                        color: #065f46;
+                    }
+                    .notification-error .notification-text {
+                        color: #dc2626;
+                    }
+                    .notification-close {
+                        background: none;
+                        border: none;
+                        cursor: pointer;
+                        padding: 0.25rem;
+                        border-radius: 4px;
+                        transition: background 0.2s ease;
+                    }
+                    .notification-success .notification-close {
+                        color: #065f46;
+                    }
+                    .notification-error .notification-close {
+                        color: #dc2626;
+                    }
+                    .notification-close:hover {
+                        background: rgba(0, 0, 0, 0.1);
+                    }
+                    @keyframes slideInRight {
+                        from {
+                            opacity: 0;
+                            transform: translateX(100px);
+                        }
+                        to {
+                            opacity: 1;
+                            transform: translateX(0);
+                        }
+                    }
+                `;
+                document.head.appendChild(styles);
+            }
+            
+            document.body.appendChild(notification);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Element SDK implementation
+        async function onConfigChange(config) {
+            // Update company name in multiple locations
+            const companyName = config.company_name || defaultConfig.company_name;
+            const companyNameElements = document.querySelectorAll('#company-name, #company-name-hero');
+            companyNameElements.forEach(element => {
+                if (element) element.textContent = companyName;
+            });
+            
+            // Update tagline
+            const tagline = config.tagline || defaultConfig.tagline;
+            const taglineElement = document.getElementById('tagline');
+            if (taglineElement) taglineElement.textContent = tagline;
+            
+            // Update hero description
+            const heroDescription = config.hero_description || defaultConfig.hero_description;
+            const heroDescElement = document.getElementById('hero-description');
+            if (heroDescElement) heroDescElement.textContent = heroDescription;
+            
+            // Update contact information across all pages
+            const contactEmail = config.contact_email || defaultConfig.contact_email;
+            const emailElements = document.querySelectorAll('#contact-email-display, #contact-email-map, #contact-email-about, #contact-email-contact');
+            emailElements.forEach(element => {
+                if (element) element.textContent = contactEmail;
+            });
+            
+            const contactPhone = config.contact_phone || defaultConfig.contact_phone;
+            const phoneElements = document.querySelectorAll('#contact-phone-display, #contact-phone-map, #contact-phone-about, #contact-phone-contact');
+            phoneElements.forEach(element => {
+                if (element) element.textContent = contactPhone;
+            });
+            
+            const officeAddress = config.office_address || defaultConfig.office_address;
+            const addressElements = document.querySelectorAll('#office-address-display, #office-address-map, #office-address-about, #office-address-contact');
+            addressElements.forEach(element => {
+                if (element) element.textContent = officeAddress;
+            });
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["company_name", config.company_name || defaultConfig.company_name],
+                ["tagline", config.tagline || defaultConfig.tagline],
+                ["hero_description", config.hero_description || defaultConfig.hero_description],
+                ["contact_email", config.contact_email || defaultConfig.contact_email],
+                ["contact_phone", config.contact_phone || defaultConfig.contact_phone],
+                ["office_address", config.office_address || defaultConfig.office_address]
+            ]);
+        }
+
+        // Initialize Element SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+
+        // Modern Live Chat Functionality
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            const chatButton = document.getElementById('chatButton');
+            const chatBadge = document.getElementById('chatBadge');
+            
+            if (chatWindow.classList.contains('active')) {
+                chatWindow.classList.remove('active');
+                chatButton.querySelector('.chat-text').textContent = 'Live Support';
+            } else {
+                chatWindow.classList.add('active');
+                chatButton.querySelector('.chat-text').textContent = 'Chat Open';
+                chatBadge.style.display = 'none';
+            }
+        }
+
+        function sendQuickMessage(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const quickReplies = document.getElementById('chatQuickReplies');
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-message user';
+            userMessage.innerHTML = `
+                <div class="message-avatar">👤</div>
+                <div class="message-content">
+                    <div class="message-text">${message}</div>
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            chatMessages.appendChild(userMessage);
+            
+            // Hide quick replies temporarily
+            quickReplies.style.display = 'none';
+            
+            // Show typing indicator
+            typingIndicator.classList.add('active');
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate typing delay and bot response
+            setTimeout(() => {
+                typingIndicator.classList.remove('active');
+                
+                const botMessage = document.createElement('div');
+                botMessage.className = 'chat-message bot';
+                
+                // Enhanced response logic
+                const responses = {
+                    'Get a shipping quote': {
+                        text: 'I\'d be happy to help you get a shipping quote! 📋\n\nFor the most accurate quote, I\'ll need some details:\n• Origin and destination\n• Cargo type and weight\n• Preferred shipping method\n\nYou can either:\n🔗 Fill out our detailed quote form\n📞 Call us at +91 98765 43210\n📧 Email us at info@octopussupplychain.com\n\nOur team typically responds within 2 hours with competitive rates!',
+                        action: () => showPage('quote')
+                    },
+                    'Track my shipment': {
+                        text: 'I can help you track your shipment! 📦\n\nTo track your cargo, I\'ll need:\n• Your tracking number or\n• Bill of lading number or\n• Container number\n\nYou can also:\n📞 Call our 24/7 tracking hotline: +91 98765 43210\n📧 Email us with your shipment details\n\nOur system provides real-time updates on your cargo\'s location and estimated delivery time.',
+                        action: null
+                    },
+                    'Port information': {
+                        text: 'We operate across all major Indian ports! ⚓\n\n🏢 **Main Ports We Serve:**\n• Mumbai (JNPT) - Our headquarters location\n• Chennai Port\n• Kolkata Port\n• Kandla Port\n• Cochin Port\n• Visakhapatnam Port\n\n📍 **Our Expertise:**\n• Port documentation\n• Berth scheduling\n• Container handling\n• Customs clearance\n\nWhich specific port information do you need?',
+                        action: null
+                    },
+                    'Customs clearance help': {
+                        text: 'Our customs clearance experts are here to help! 📋\n\n✅ **Our Services Include:**\n• Import/Export documentation\n• Duty calculation and optimization\n• License and permit assistance\n• Compliance management\n• Fast-track clearance\n\n🏆 **Why Choose Us:**\n• 15+ years of experience\n• 99.5% clearance success rate\n• Relationships with all major ports\n• Real-time status updates\n\nNeed help with a specific clearance issue?',
+                        action: null
+                    },
+                    'Contact information': {
+                        text: 'Here\'s how you can reach us! 📞\n\n🏢 **Octopus Supply Chain**\n📍 Manmandir Residency, Chhatdiya Road\n    Rajula, Gujarat, India\n\n📞 **Phone:** +91 98765 43210\n📧 **Email:** info@octopussupplychain.com\n\n🕒 **Business Hours:**\nMon-Sat: 9:00 AM - 6:00 PM\n\n⚡ **24/7 Emergency Support Available**\n🚀 **Average Response Time: 2 hours**',
+                        action: () => showPage('contact')
+                    },
+                    'Our services': {
+                        text: 'We offer comprehensive logistics solutions! 🚢\n\n🌟 **Our Core Services:**\n• 🚢 Freight Forwarding (Sea/Air/Land)\n• 📋 Customs Clearance\n• 🏢 Warehousing & Distribution\n• 🚛 Transportation Services\n• 💼 Supply Chain Consulting\n• 🔗 End-to-End Solutions\n\n✨ **Why Choose Us:**\n• 500+ Happy Clients\n• 10,000+ Shipments Delivered\n• ISO 9001:2015 Certified\n• 15+ Years Experience\n\nWould you like details about any specific service?',
+                        action: () => showPage('services')
+                    }
+                };
+                
+                const response = responses[message] || {
+                    text: 'Thank you for your message! 😊\n\nOur logistics experts will get back to you shortly. For immediate assistance:\n\n📞 Call: +91 98765 43210\n📧 Email: info@octopussupplychain.com\n\nIs there anything else I can help you with?',
+                    action: null
+                };
+                
+                // Type out the response character by character
+                typeMessage(botMessage, response.text, () => {
+                    if (response.action) {
+                        setTimeout(response.action, 1000);
+                    }
+                    // Show quick replies again
+                    quickReplies.style.display = 'block';
+                });
+                
+                chatMessages.appendChild(botMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1500 + Math.random() * 1000); // Random delay for realism
+        }
+
+        function typeMessage(messageElement, text, callback) {
+            messageElement.innerHTML = `
+                <div class="message-avatar">🐙</div>
+                <div class="message-content">
+                    <div class="message-text"></div>
+                    <div class="message-time">${getCurrentTime()}</div>
+                </div>
+            `;
+            
+            const textElement = messageElement.querySelector('.message-text');
+            let index = 0;
+            
+            function typeChar() {
+                if (index < text.length) {
+                    textElement.innerHTML += text.charAt(index);
+                    index++;
+                    
+                    // Scroll to bottom as text appears
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // Variable typing speed for realism
+                    const delay = text.charAt(index - 1) === '\n' ? 100 : 
+                                 text.charAt(index - 1) === '.' ? 200 : 
+                                 Math.random() * 50 + 30;
+                    
+                    setTimeout(typeChar, delay);
+                } else {
+                    if (callback) callback();
+                }
+            }
+            
+            typeChar();
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Form Validation Enhancement
+        function validateForm(formElement) {
+            const requiredFields = formElement.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                const value = field.value.trim();
+                const fieldContainer = field.closest('.form-group');
+                
+                // Remove existing error messages
+                const existingError = fieldContainer.querySelector('.field-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                if (!value) {
+                    isValid = false;
+                    showFieldError(field, 'This field is required');
+                } else if (field.type === 'email' && !isValidEmail(value)) {
+                    isValid = false;
+                    showFieldError(field, 'Please enter a valid email address');
+                } else if (field.type === 'tel' && !isValidPhone(value)) {
+                    isValid = false;
+                    showFieldError(field, 'Please enter a valid phone number');
+                }
+            });
+            
+            return isValid;
+        }
+
+        function showFieldError(field, message) {
+            const fieldContainer = field.closest('.form-group');
+            const errorElement = document.createElement('div');
+            errorElement.className = 'field-error';
+            errorElement.textContent = message;
+            errorElement.style.cssText = `
+                color: #dc2626;
+                font-size: 0.8rem;
+                margin-top: 0.25rem;
+                animation: fadeInUp 0.3s ease-out;
+            `;
+            
+            fieldContainer.appendChild(errorElement);
+            field.style.borderColor = '#dc2626';
+            
+            // Remove error styling when user starts typing
+            field.addEventListener('input', function() {
+                field.style.borderColor = '';
+                if (errorElement.parentElement) {
+                    errorElement.remove();
+                }
+            }, { once: true });
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidPhone(phone) {
+            const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+            return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navMenu = document.getElementById('navMenu');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (navMenu && mobileMenuBtn && 
+                !navMenu.contains(event.target) && 
+                !mobileMenuBtn.contains(event.target)) {
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Apply initial config
+            onConfigChange(defaultConfig);
+            
+            // Initialize animations
+            animateOnScroll();
+            animateCounters();
+            
+            // Initialize maps
+            initializeMaps();
+            
+            // Add scroll listener for animations
+            window.addEventListener('scroll', animateOnScroll);
+            
+            // Initialize chat with welcome message delay
+            setTimeout(() => {
+                const chatButton = document.getElementById('chatButton');
+                if (chatButton) {
+                    chatButton.style.animation = 'pulse 2s infinite';
+                    
+                    // Add chat notification after 5 seconds
+                    setTimeout(() => {
+                        const chatBadge = document.getElementById('chatBadge');
+                        if (chatBadge) {
+                            chatBadge.style.display = 'flex';
+                            chatBadge.textContent = '!';
+                        }
+                    }, 5000);
+                }
+            }, 3000);
+            
+            // Add keyboard navigation support
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    // Close mobile menu
+                    const navMenu = document.getElementById('navMenu');
+                    if (navMenu && navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active');
+                    }
+                    
+                    // Close chat window
+                    const chatWindow = document.getElementById('chatWindow');
+                    if (chatWindow && chatWindow.classList.contains('active')) {
+                        toggleChat();
+                    }
+                }
+            });
+        });
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9989740002167e79',t:'MTc2MjE0NzU0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
