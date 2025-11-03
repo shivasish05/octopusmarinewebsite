@@ -1,0 +1,59 @@
+{
+  "posts": [
+    {
+      "id": "kandla-container-traffic-2025",
+      "title": "Rising Container Traffic at Kandla (Gandhidham): What It Means for Importers",
+      "date": "2025-10-01",
+      "author": "Octopus SCM Team",
+      "category": "Ports & Terminals",
+      "summary": "Kandla (near Gandhidham) is seeing increased container throughput in 2025. Learn what importers should expect and how to prepare.",
+      "content": "<p>India's Kandla port, serving the Kutch region and Gandhidham, has seen a steady increase in container traffic this year driven by rising demand in industrial and consumer sectors. Shippers and importers may face episodic congestion but can mitigate risk by booking earlier, using flexible routing, and working closely with local agents for yard space and documentation.</p><p>Practical tips:</p><ul><li>Plan shipments 7–14 days earlier than usual during peak seasons.</li><li>Confirm container availability and terminal cut-offs with carriers.</li><li>Prepare paperwork (invoice, packing list, bill of lading, IEC) in advance to avoid customs delays.</li></ul>",
+      "source_link": "https://www.marineinsight.com/kandla-container-traffic",
+      "tags": ["ports", "kandla", "gandhidham", "container", "imports"]
+    },
+    {
+      "id": "gst-einvoicing-crossborder-2025",
+      "title": "How GST & E-invoicing Changes Affect Cross-Border Shipments",
+      "date": "2025-09-15",
+      "author": "Octopus SCM Team",
+      "category": "Customs & Compliance",
+      "summary": "Recent GST and e-invoicing clarifications introduce new compliance steps for importers and logistics providers — here’s a practical primer.",
+      "content": "<p>India's evolving GST and e-invoicing rules can impact cross-border shipments through changes in classification, documentary requirements, and timing of tax credits. Importers should stay aligned with their customs broker and tax advisors to ensure smooth clearance.</p><p>Key actions:</p><ul><li>Validate HS codes early to avoid reassessment.</li><li>Ensure invoice formats meet e-invoicing schema when applicable.</li><li>Coordinate with customs brokers to reconcile tax inputs post-clearance.</li></ul>",
+      "source_link": "https://www.marineinsight.com/gst-e-invoicing-crossborder",
+      "tags": ["gst", "e-invoicing", "customs", "compliance"]
+    },
+    {
+      "id": "project-oog-handling-india",
+      "title": "Project & OOG Cargo: Best Practices for Indian Heavy Lifts",
+      "date": "2025-08-20",
+      "author": "Octopus SCM Team",
+      "category": "Project Cargo",
+      "summary": "Out-of-gauge and project cargo require special planning — learn the checklist for safe movement through Indian ports and road networks.",
+      "content": "<p>Moving OOG and heavy-lift cargo in India demands detailed engineering, route surveys, permits, and close coordination with ports, transporters, and police authorities. Early mobilization of NOCs and escorts reduces the chance of last-minute hold-ups.</p><p>Checklist highlights:</p><ul><li>Detailed lifting and stowage plans signed off by structural engineers.</li><li>Route surveys and temporary infrastructure adjustments identified early.</li><li>Permits and police escorts booked well ahead of movement.</li></ul>",
+      "source_link": "https://www.marineinsight.com/project-oog-handling-india",
+      "tags": ["project-cargo", "oog", "heavy-lift", "permits"]
+    },
+    {
+      "id": "air-freight-trends-india-2025",
+      "title": "Air Freight Trends: Capacity and Rates in India (2025)",
+      "date": "2025-07-10",
+      "author": "Octopus SCM Team",
+      "category": "Air Freight",
+      "summary": "Air cargo capacity and rate dynamics are shifting — here’s how Indian exporters can optimize costs while maintaining lead-times.",
+      "content": "<p>While passenger belly capacity has recovered, demand spikes and route-specific constraints still create rate volatility. Exporters should balance lead time and cost by consolidating shipments, choosing flexible carriers, and leveraging regional gateways.</p><p>Pro tips:</p><ul><li>Use consolidation for lower-cost LCL air shipments.</li><li>Lock rates with carriers during promotional windows.</li><li>Consider near-air alternatives for time-sensitive but cost-sensitive cargo.</li></ul>",
+      "source_link": "https://www.marineinsight.com/air-freight-trends-india-2025",
+      "tags": ["air-freight", "rates", "capacity", "exports"]
+    },
+    {
+      "id": "digital-visibility-ports-2025",
+      "title": "Digitizing Supply Chains: Port Community Systems & Visibility in India",
+      "date": "2025-06-30",
+      "author": "Octopus SCM Team",
+      "category": "Technology",
+      "summary": "Greater adoption of port community systems and API-based visibility is improving dwell time and predictability — here's how to benefit.",
+      "content": "<p>Port Community Systems (PCS), APIs from carriers and terminals, and modern TMS integrations are making supply chains more predictable. Firms that invest in IT integrations gain better ETA accuracy, lower detention costs, and faster exceptions handling.</p><p>What to implement:</p><ul><li>Integrate carrier APIs for real-time event updates.</li><li>Use PCS portals to track container moves and document status.</li><li>Adopt exception workflows to reduce manual email chains.</li></ul>",
+      "source_link": "https://www.marineinsight.com/digital-visibility-ports-2025",
+      "tags": ["digitalization", "pcs", "visibility", "tms"]
+    }
+  ]
+}

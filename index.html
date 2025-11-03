@@ -6,6 +6,12 @@
   <title>Octopus Supply Chain - Delivering Efficiency Across Every Port</title>
   <meta name="description" content="Leading logistics and supply chain solutions across India's major ports. Freight forwarding, customs clearance, warehousing, and transportation services.">
   <meta name="keywords" content="logistics, supply chain, freight forwarding, customs clearance, warehousing, transportation, India ports">
+    <!-- Site icon / favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="shortcut icon" href="assets/favicon.png">
+    <!-- JPEG fallback and apple touch icon -->
+    <link rel="icon" type="image/jpeg" href="assets/octopus%20logo.jpeg">
+    <link rel="apple-touch-icon" href="assets/octopus%20logo.jpeg">
   <script src="/_sdk/element_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -128,6 +134,26 @@
             }
         }
 
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            box-shadow: var(--shadow-light);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: padding 0.3s ease;
+        }
+
         .header.scrolled .nav-container {
             padding: 0.75rem 2rem;
         }
@@ -138,6 +164,7 @@
             gap: 0.75rem;
             text-decoration: none;
             transition: transform 0.3s ease;
+            margin-right: 2rem;
         }
 
         .logo:hover {
@@ -150,7 +177,7 @@
 
         /* Site logo image sizing */
         .site-logo {
-            max-height: 96px;
+            max-height: 72px;
             width: auto;
             display: block;
         }
@@ -162,7 +189,7 @@
             display: block;
         }
 
-        @keyframes float {
+            @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-5px); }
         }
@@ -184,7 +211,45 @@
             padding: 0.5rem 0;
         }
 
-        .nav-menu a::after {
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--white);
+            padding: 1rem;
+            min-width: 200px;
+            border-radius: var(--radius-medium);
+            box-shadow: var(--shadow-large);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+            
+        @media (max-width: 768px) {
+            .dropdown-menu {
+                position: static;
+                box-shadow: none;
+                padding: 0 1rem;
+                opacity: 1;
+                pointer-events: all;
+                transform: none;
+                display: none;
+                background: transparent;
+            }
+
+            .dropdown-menu.show {
+                display: block;
+            }
+
+            .dropdown-menu a {
+                padding: 0.5rem 0;
+            }
+        }        .nav-menu a::after {
             content: '';
             position: absolute;
             bottom: 0;
@@ -707,7 +772,12 @@
         /* Enhanced Services Section */
         .services-section {
             padding: 6rem 2rem;
-            background: var(--white);
+            background: var(--light-gray);
+        }
+
+        /* Ensure services heading contrasts on light background */
+        .services-section .section-title {
+            color: var(--text-dark);
         }
 
         .services-container {
@@ -1537,20 +1607,37 @@
                 top: 100%;
                 left: 0;
                 width: 100%;
-                background: rgba(255, 255, 255, 0.98);
-                backdrop-filter: blur(10px);
+                background: var(--white);
                 flex-direction: column;
-                padding: 2rem;
+                padding: 1rem;
                 box-shadow: var(--shadow-large);
                 border-top: 1px solid var(--border-gray);
+                text-align: center;
+                z-index: 1001;
             }
 
             .nav-menu.active {
                 display: flex;
             }
 
+            .nav-menu li {
+                margin: 0.5rem 0;
+            }
+
+            .nav-menu a {
+                display: block;
+                padding: 0.75rem;
+                font-size: 1.1rem;
+            }
+
+            .nav-cta {
+                margin: 0.5rem auto;
+                width: 200px;
+            }
+
             .mobile-menu-btn {
                 display: block;
+                margin-left: auto;
             }
 
             .hero {
@@ -1751,6 +1838,8 @@
      <li><a href="#" onclick="showPage('home')">Home</a></li>
      <li><a href="#" onclick="showPage('about')">About</a></li>
      <li><a href="#" onclick="showPage('services')">Services</a></li>
+     <li><a href="https://www.linkedin.com/company/octopus-scm-expeditors-private-limited/jobs/" target="_blank">Careers</a></li>
+     <li><a href="blog.html">Blog</a></li>
      <li><a href="#" onclick="showPage('contact')">Contact</a></li>
      <li><a href="#" class="nav-cta" onclick="showPage('quote')">Get Quote</a></li>
     </ul><button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu"> ☰ </button>
@@ -2048,13 +2137,13 @@
       <div class="map-content">
        <div class="map-info animate-on-scroll">
         <h3>Our Location</h3>
-        <p>Strategically located in Rajula, Gujarat, we provide comprehensive logistics solutions with excellent connectivity to major ports and transportation networks across India.</p>
+    <p>Strategically located in Gandhidham, Gujarat, we provide comprehensive logistics solutions with excellent connectivity to major ports and transportation networks across India.</p>
         <div class="location-details">
-         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-map">Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN</span>
+         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-map">Office no 204, Second floor, Meridian house, Plot no 50, Sector 8, Gandhidham, 370201</span>
          </div>
-         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-map">+91 98765 43210</span>
+         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-map">+91 7574863100</span>
          </div>
-         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-map">info@octopussupplychain.com</span>
+         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-map">biz@octopuscargocare.com</span>
          </div>
          <div class="location-item"><span class="location-icon">🕒</span> <span>Mon-Sat: 9:00 AM - 6:00 PM</span>
          </div>
@@ -2071,65 +2160,76 @@
     <div class="about-hero">
      <div class="content-section">
       <h1 class="section-title" style="color: white; margin-bottom: 1rem;">About Octopus Supply Chain</h1>
-      <p style="font-size: 1.2rem; opacity: 0.9; max-width: 800px; margin: 0 auto;">With over a decade of experience in logistics and supply chain management, we've established ourselves as India's most trusted logistics partner.</p>
+    <p style="font-size: 1.05rem; opacity: 0.95; max-width: 900px; margin: 0 auto; line-height:1.6;">Octopus started in 2014, emerging as an international freight forwarder and customs broker supporting small businesses at Pipavav. Backed by over 14 years of industry experience serving under banners such as James Mackintosh, Pacific International Line, JM Baxi &amp; Co., Hanjin Shipping and OOCL, we bring deep domain knowledge and long-term partnership vision to every shipment.</p>
      </div>
     </div><!-- Vision & Mission Section -->
     <section class="vision-mission">
      <div class="vision-mission-container">
       <div class="section-header animate-on-scroll">
        <h2 class="section-title" style="color: white;">Our Vision &amp; Mission</h2>
-       <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">Driving the future of logistics with purpose and innovation</p>
+    <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">Driving the future of logistics with purpose and innovation</p>
       </div>
       <div class="vision-mission-grid">
        <div class="vision-card animate-on-scroll">
-        <h3>🔮 Our Vision</h3>
-        <p>To be India's most trusted and innovative logistics partner, setting new standards in supply chain excellence while enabling businesses to thrive in the global marketplace through seamless, technology-driven solutions that prioritize sustainability and customer success.</p>
+    <h3>🔮 Our Vision</h3>
+    <p>To be the most reliable and efficient transport and distribution service provider offering a broad spectrum of related services and products, committed to service excellence and renowned for our integrity and ability to deliver.</p>
        </div>
        <div class="mission-card animate-on-scroll">
-        <h3>🎯 Our Mission</h3>
-        <p>To provide comprehensive, efficient, and cost-effective logistics solutions that empower our clients to focus on their core business while we handle their supply chain complexities with precision, care, and unwavering commitment to excellence and innovation.</p>
+    <h3>🎯 Our Mission</h3>
+    <p>Providing excellent logistics services focused on reliability, timely delivery and tailored solutions that meet the unique needs of each client.</p>
        </div>
       </div>
      </div>
     </section>
     <section class="content-section">
      <div class="about-grid">
-      <div class="about-card animate-on-scroll">
-       <div class="about-content"><span class="about-icon">🏆</span>
-        <h3>Industry Leadership</h3>
-        <p>Over 15 years of excellence in logistics and supply chain management, serving clients across diverse industries with unmatched expertise and reliability. Our track record speaks for itself with over 10,000 successful shipments delivered.</p>
-       </div>
-      </div>
-      <div class="about-card animate-on-scroll">
-       <div class="about-content"><span class="about-icon">🌐</span>
-        <h3>Global Network</h3>
-        <p>Strategic partnerships with leading logistics providers worldwide, ensuring seamless connectivity and reliable service delivery across international trade routes. We connect India to over 150 countries worldwide.</p>
-       </div>
-      </div>
-      <div class="about-card animate-on-scroll">
-       <div class="about-content"><span class="about-icon">💡</span>
-        <h3>Technology Innovation</h3>
-        <p>Cutting-edge technology integration including real-time tracking, automated documentation, and AI-powered route optimization for maximum efficiency and transparency in all operations.</p>
-       </div>
-      </div>
-      <div class="about-card animate-on-scroll">
-       <div class="about-content"><span class="about-icon">⚓</span>
-        <h3>Port Expertise</h3>
-        <p>Specialized operations across major Indian ports including Mumbai (JNPT), Chennai, Kolkata, Kandla, and Cochin with deep local knowledge and strong relationships built over years of dedicated service.</p>
-       </div>
-      </div>
-      <div class="about-card animate-on-scroll">
-       <div class="about-content"><span class="about-icon">🛡️</span>
-        <h3>Compliance &amp; Security</h3>
-        <p>ISO 9001:2015 certified operations with stringent security protocols and full compliance with international trade regulations, customs requirements, and industry best practices.</p>
-       </div>
-      </div>
-      <div class="about-card animate-on-scroll">
-       <div class="about-content"><span class="about-icon">👥</span>
-        <h3>Expert Team</h3>
-        <p>Industry veterans with combined experience of over 50 years in international trade, customs, and logistics operations, ensuring expert guidance and personalized service for every client and shipment.</p>
-       </div>
-      </div>
+    <div class="about-card animate-on-scroll">
+     <div class="about-content"><span class="about-icon">📜</span>
+      <h3>Our Journey</h3>
+      <p>Octopus began operations in 2014 at Pipavav as an international freight forwarder and customs broker focused on small businesses. Over the years we have accumulated 14+ years of industry experience working with established names such as James Mackintosh, Pacific International Line, JM Baxi &amp; Co., Hanjin Shipping and OOCL.</p>
+     </div>
+    </div>
+    <div class="about-card animate-on-scroll">
+     <div class="about-content"><span class="about-icon">📦</span>
+      <h3>Core Services &amp; Cargo</h3>
+      <p>We specialise in cargo clearance and forwarding for a wide range of commodities including minerals, non-hazardous chemicals, coal, ground nut kernels, onions &amp; spices, bath accessories, medical pump dispensers, ceramic machinery, LDPE/HDPE, base paper, bamboo products, car applications, sodium tripolyphosphate and related goods.</p>
+     </div>
+    </div>
+    <div class="about-card animate-on-scroll">
+     <div class="about-content"><span class="about-icon">🏗️</span>
+      <h3>Project &amp; OOG Handling</h3>
+      <p>We operate specialised equipment for project cargo and out-of-gauge (OOG) cargo handling at Pipavav, ensuring safe and efficient movement of oversized and heavy consignments.</p>
+     </div>
+    </div>
+    <div class="about-card animate-on-scroll">
+     <div class="about-content"><span class="about-icon">🚢</span>
+      <h3>Shipping Agency Partners</h3>
+      <p>We act as shipping agents for Liner / NVOCC operators including Econship Marine, Satkar Container Line, Muskan Container Line, Transvision Shipping and Sea Hawk Container Line.</p>
+     </div>
+    </div>
+    <div class="about-card animate-on-scroll">
+     <div class="about-content"><span class="about-icon">🌐</span>
+      <h3>Service Network</h3>
+      <p>Vast service network across the full region of Gujarat, enabling strong local coverage and timely connectivity to major ports and transport corridors.</p>
+     </div>
+    </div>
+    <div class="about-card animate-on-scroll">
+     <div class="about-content"><span class="about-icon">🏢</span>
+      <h3>Offices</h3>
+      <p>Pipavav (HO), Ahmedabad, Hazira, Mundra, Kandla</p>
+     </div>
+    </div>
+    <div class="about-card animate-on-scroll">
+     <div class="about-content"><span class="about-icon">💡</span>
+      <h3>Our Values</h3>
+      <ul style="margin:0.5rem 0 0 1rem; color:var(--text-light)">
+       <li>Passion for Delivery</li>
+       <li>Winning</li>
+       <li>Forward Looking</li>
+       <li>Integrity</li>
+      </ul>
+     </div>
+    </div>
      </div>
     </section><!-- Map Section -->
     <section class="map-section">
@@ -2141,13 +2241,13 @@
       <div class="map-content">
        <div class="map-info animate-on-scroll">
         <h3>Strategic Location</h3>
-        <p>Our headquarters in Rajula, Gujarat provides strategic access to India's major ports and transportation networks, enabling us to serve our clients with maximum efficiency and minimal transit times.</p>
+    <p>Our headquarters in Gandhidham, Gujarat provides strategic access to India's major ports and transportation networks, enabling us to serve our clients with maximum efficiency and minimal transit times.</p>
         <div class="location-details">
-         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-about">Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN</span>
+         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-about">Office no 204, Second floor, Meridian house, Plot no 50, Sector 8, Gandhidham, 370201</span>
          </div>
-         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-about">+91 98765 43210</span>
+         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-about">+91 7574863100</span>
          </div>
-         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-about">info@octopussupplychain.com</span>
+         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-about">biz@octopuscargocare.com</span>
          </div>
          <div class="location-item"><span class="location-icon">🕒</span> <span>Mon-Sat: 9:00 AM - 6:00 PM</span>
          </div>
@@ -2168,104 +2268,43 @@
      </div>
     </div>
     <section class="content-section">
-     <div class="services-grid">
-      <div class="service-card animate-on-scroll">
-       <div class="service-content"><span class="service-icon">🚢</span>
-        <h3>Freight Forwarding</h3>
-        <p>Comprehensive sea, air, and land freight solutions with real-time tracking, competitive rates, and expert handling of all cargo types.</p>
-        <ul class="service-features">
-         <li>FCL &amp; LCL Sea Freight Services</li>
-         <li>Express &amp; Economy Air Cargo</li>
-         <li>Cross-border Land Transportation</li>
-         <li>Real-time Shipment Tracking</li>
-         <li>Competitive Rate Negotiations</li>
-         <li>Multi-modal Transport Solutions</li>
-         <li>Specialized Cargo Handling</li>
-         <li>Route Optimization Services</li>
-        </ul>
-       </div>
-      </div>
-      <div class="service-card animate-on-scroll">
-       <div class="service-content"><span class="service-icon">📋</span>
-        <h3>Customs Clearance</h3>
-        <p>Expert customs brokerage services ensuring smooth and compliant clearance at all major Indian ports with minimal delays.</p>
-        <ul class="service-features">
-         <li>Import/Export Documentation</li>
-         <li>Duty Optimization Strategies</li>
-         <li>Compliance Management</li>
-         <li>License &amp; Permit Assistance</li>
-         <li>Regulatory Advisory Services</li>
-         <li>Fast-track Clearance Options</li>
-         <li>Tariff Classification Support</li>
-         <li>Audit &amp; Risk Management</li>
-        </ul>
-       </div>
-      </div>
-      <div class="service-card animate-on-scroll">
-       <div class="service-content"><span class="service-icon">🏢</span>
-        <h3>Warehousing &amp; Distribution</h3>
-        <p>Secure storage and distribution facilities with advanced inventory management systems and flexible storage solutions.</p>
-        <ul class="service-features">
-         <li>Bonded &amp; Non-bonded Warehouses</li>
-         <li>Advanced Inventory Management</li>
-         <li>Pick, Pack &amp; Ship Services</li>
-         <li>Cross-docking Facilities</li>
-         <li>Temperature-controlled Storage</li>
-         <li>Value-added Services</li>
-         <li>Quality Control &amp; Inspection</li>
-         <li>Kitting &amp; Assembly Services</li>
-        </ul>
-       </div>
-      </div>
-      <div class="service-card animate-on-scroll">
-       <div class="service-content"><span class="service-icon">🚛</span>
-        <h3>Transportation Services</h3>
-        <p>Reliable door-to-door delivery services with our extensive network of trusted transport partners and specialized vehicles.</p>
-        <ul class="service-features">
-         <li>Last-mile Delivery Solutions</li>
-         <li>Container Transportation</li>
-         <li>Project Cargo Handling</li>
-         <li>Specialized Vehicle Fleet</li>
-         <li>Route Optimization</li>
-         <li>GPS Tracking &amp; Monitoring</li>
-         <li>Express Delivery Options</li>
-         <li>Bulk Cargo Transportation</li>
-        </ul>
-       </div>
-      </div>
-      <div class="service-card animate-on-scroll">
-       <div class="service-content"><span class="service-icon">💼</span>
-        <h3>Supply Chain Consulting</h3>
-        <p>Strategic consulting services to optimize your supply chain operations, reduce costs, and improve efficiency through expert analysis.</p>
-        <ul class="service-features">
-         <li>Supply Chain Analysis</li>
-         <li>Process Optimization</li>
-         <li>Cost Reduction Strategies</li>
-         <li>Risk Management Planning</li>
-         <li>Technology Integration</li>
-         <li>Performance Metrics &amp; KPIs</li>
-         <li>Vendor Management</li>
-         <li>Digital Transformation</li>
-        </ul>
-       </div>
-      </div>
-      <div class="service-card animate-on-scroll">
-       <div class="service-content"><span class="service-icon">🔗</span>
-        <h3>End-to-End Solutions</h3>
-        <p>Complete supply chain management from procurement to delivery, providing seamless integration and comprehensive oversight.</p>
-        <ul class="service-features">
-         <li>Procurement Support</li>
-         <li>Vendor Management</li>
-         <li>Quality Control &amp; Inspection</li>
-         <li>Documentation Management</li>
-         <li>Insurance &amp; Risk Coverage</li>
-         <li>24/7 Customer Support</li>
-         <li>Performance Analytics</li>
-         <li>Continuous Improvement</li>
-        </ul>
-       </div>
+    <div class="services-grid">
+     <div class="service-card animate-on-scroll">
+      <div class="service-content"><span class="service-icon">🚚</span>
+       <h3>SHIPPING &amp; FORWARDING</h3>
       </div>
      </div>
+     <div class="service-card animate-on-scroll">
+      <div class="service-content"><span class="service-icon">📋</span>
+       <h3>CARGO CLEARANCE</h3>
+      </div>
+     </div>
+     <div class="service-card animate-on-scroll">
+      <div class="service-content"><span class="service-icon">🚢</span>
+       <h3>PORT AND TERMINAL SERVICES</h3>
+      </div>
+     </div>
+     <div class="service-card animate-on-scroll">
+      <div class="service-content"><span class="service-icon">✈️</span>
+       <h3>MULTI MODEL LOGISTICS</h3>
+      </div>
+     </div>
+     <div class="service-card animate-on-scroll">
+      <div class="service-content"><span class="service-icon">🏠</span>
+       <h3>WAREHOUSING</h3>
+      </div>
+     </div>
+     <div class="service-card animate-on-scroll">
+      <div class="service-content"><span class="service-icon">🏞️</span>
+       <h3>EMPTY YARD</h3>
+      </div>
+     </div>
+     <div class="service-card animate-on-scroll">
+      <div class="service-content"><span class="service-icon">👥</span>
+       <h3>SHIPPING AGENT</h3>
+      </div>
+     </div>
+    </div>
     </section>
    </div><!-- Contact Page -->
    <div id="contact" class="page">
@@ -2277,19 +2316,19 @@
     </div>
     <section class="content-section">
      <div class="contact-info">
-      <div class="contact-card animate-on-scroll"><span class="contact-icon">📧</span>
-       <h3>Email Us</h3>
-       <p id="contact-email-display">info@octopussupplychain.com</p>
+    <div class="contact-card animate-on-scroll"><span class="contact-icon">📧</span>
+     <h3>Email Us</h3>
+     <p id="contact-email-display">biz@octopuscargocare.com</p>
        <p style="color: var(--text-light); font-size: 0.9rem;">We respond within 2 hours</p>
       </div>
       <div class="contact-card animate-on-scroll"><span class="contact-icon">📞</span>
        <h3>Call Us</h3>
-       <p id="contact-phone-display">+91 98765 43210</p>
+     <p id="contact-phone-display">+91 7574863100</p>
        <p style="color: var(--text-light); font-size: 0.9rem;">24/7 Customer Support</p>
       </div>
       <div class="contact-card animate-on-scroll"><span class="contact-icon">📍</span>
        <h3>Visit Us</h3>
-       <p id="office-address-display">Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN</p>
+     <p id="office-address-display">Office no 204, Second floor, Meridian house, Plot no 50, Sector 8, Gandhidham, 370201</p>
        <p style="color: var(--text-light); font-size: 0.9rem;">Mon-Sat: 9AM-6PM</p>
       </div>
      </div>
@@ -2321,13 +2360,13 @@
       <div class="map-content">
        <div class="map-info animate-on-scroll">
         <h3>Our Location</h3>
-        <p>Strategically located in Rajula, Gujarat, we provide comprehensive logistics solutions with excellent connectivity to major ports and transportation networks across India.</p>
+    <p>Strategically located in Gandhidham, Gujarat, we provide comprehensive logistics solutions with excellent connectivity to major ports and transportation networks across India.</p>
         <div class="location-details">
-         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-contact">Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN</span>
+         <div class="location-item"><span class="location-icon">📍</span> <span id="office-address-contact">Office no 204, Second floor, Meridian house, Plot no 50, Sector 8, Gandhidham, 370201</span>
          </div>
-         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-contact">+91 98765 43210</span>
+         <div class="location-item"><span class="location-icon">📞</span> <span id="contact-phone-contact">+91 7574863100</span>
          </div>
-         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-contact">info@octopussupplychain.com</span>
+         <div class="location-item"><span class="location-icon">📧</span> <span id="contact-email-contact">biz@octopuscargocare.com</span>
          </div>
          <div class="location-item"><span class="location-icon">🕒</span> <span>Mon-Sat: 9:00 AM - 6:00 PM</span>
          </div>
@@ -2362,7 +2401,7 @@
        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div class="form-group"><label for="quoteCompany">Company Name *</label> <input type="text" id="quoteCompany" name="company" required placeholder="Your company name">
         </div>
-        <div class="form-group"><label for="quotePhone">Phone Number *</label> <input type="tel" id="quotePhone" name="phone" required placeholder="+91 98765 43210">
+    <div class="form-group"><label for="quotePhone">Phone Number *</label> <input type="tel" id="quotePhone" name="phone" required placeholder="+91 7574863100">
         </div>
        </div>
        <div class="form-group"><label for="quoteService">Type of Service *</label> <select id="quoteService" name="service" required> <option value="">Select a service</option> <option value="freight-forwarding">Freight Forwarding</option> <option value="customs-clearance">Customs Clearance</option> <option value="warehousing">Warehousing &amp; Distribution</option> <option value="transportation">Transportation</option> <option value="consultancy">Supply Chain Consulting</option> <option value="end-to-end">End-to-End Solutions</option> </select>
@@ -2400,9 +2439,9 @@
     </div>
     <div class="footer-section">
      <h3>Contact Info</h3>
-     <p>📧 info@octopussupplychain.com</p>
-     <p>📞 +91 98765 43210</p>
-     <p>📍 Rajula, Gujarat</p>
+    <p>📧 biz@octopuscargocare.com</p>
+    <p>📞 +91 7574863100</p>
+    <p>📍 Gandhidham, Gujarat</p>
      <div style="margin-top: 1.5rem;">
       <p style="color: var(--accent-orange); font-weight: 600;">🕒 24/7 Customer Support</p>
       <p style="color: var(--accent-orange); font-weight: 600;">⚡ 2-Hour Response Time</p>
@@ -2461,9 +2500,9 @@
             company_name: "Octopus Supply Chain",
             tagline: "Delivering Efficiency Across Every Port",
             hero_description: "Your trusted partner for comprehensive logistics solutions across India's major ports. From freight forwarding to end-to-end supply chain management, we ensure your cargo reaches its destination safely and on time.",
-            contact_email: "info@octopussupplychain.com",
-            contact_phone: "+91 98765 43210",
-            office_address: "Manmandir Residency, Chhatdiya Road Rajula, Rajula, IN"
+            contact_email: "biz@octopuscargocare.com",
+            contact_phone: "+91 7574863100",
+            office_address: "Office no 204, Second floor, Meridian house, Plot no 50, Sector 8, Gandhidham, 370201"
         };
 
         // Global map variables
@@ -2507,9 +2546,10 @@
         // Initialize Maps with better error handling
         function initializeMaps() {
             try {
-                // Coordinates for Rajula, Gujarat
-                const coords = [21.0347, 71.4418];
-                const popupContent = '<b>Octopus Supply Chain</b><br>Manmandir Residency, Chhatdiya Road Rajula<br>Rajula, Gujarat, India';
+                // Coordinates for Gandhidham, Gujarat
+                // Approximate coordinates: latitude, longitude
+                const coords = [23.0766, 70.1322];
+                const popupContent = '<b>Octopus Supply Chain</b><br>Office no 204, Second floor<br>Meridian house<br>Plot no 50, Sector 8<br>Gandhidham - 370201';
                 
                 // Initialize main map (home page)
                 const mapElement = document.getElementById('map');
@@ -2526,7 +2566,7 @@
                             .bindPopup(popupContent)
                             .openPopup();
                     } catch (error) {
-                        mapElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Manmandir Residency, Chhatdiya Road Rajula<br>Rajula, Gujarat, India</div></div></div>';
+                        mapElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Office no 204, Second floor<br>Meridian house<br>Plot no 50, Sector 8<br>Gandhidham - 370201</div></div></div>';
                     }
                 }
                 
@@ -2545,7 +2585,7 @@
                             .bindPopup(popupContent)
                             .openPopup();
                     } catch (error) {
-                        mapAboutElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Manmandir Residency, Chhatdiya Road Rajula<br>Rajula, Gujarat, India</div></div></div>';
+                        mapAboutElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Office no 204, Second floor<br>Meridian house<br>Plot no 50, Sector 8<br>Gandhidham - 370201</div></div></div>';
                     }
                 }
                 
@@ -2575,7 +2615,7 @@
                             }, 100);
                         }
                     } catch (error) {
-                        mapContactElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Manmandir Residency, Chhatdiya Road Rajula<br>Rajula, Gujarat, India</div></div></div>';
+                        mapContactElement.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 400px; background: #f3f4f6; border-radius: 16px; color: #6b7280;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🗺️</div><div>Map temporarily unavailable</div><div style="font-size: 0.9rem; margin-top: 0.5rem;">Office no 204, Second floor<br>Meridian house<br>Plot no 50, Sector 8<br>Gandhidham - 370201</div></div></div>';
                     }
                 }
             } catch (error) {
@@ -3081,11 +3121,11 @@ ${formData.phone}`;
                 // Enhanced response logic
                 const responses = {
                     'Get a shipping quote': {
-                        text: 'I\'d be happy to help you get a shipping quote! 📋\n\nFor the most accurate quote, I\'ll need some details:\n• Origin and destination\n• Cargo type and weight\n• Preferred shipping method\n\nYou can either:\n🔗 Fill out our detailed quote form\n📞 Call us at +91 98765 43210\n📧 Email us at info@octopussupplychain.com\n\nOur team typically responds within 2 hours with competitive rates!',
+                        text: 'I\'d be happy to help you get a shipping quote! 📋\n\nFor the most accurate quote, I\'ll need some details:\n• Origin and destination\n• Cargo type and weight\n• Preferred shipping method\n\nYou can either:\n🔗 Fill out our detailed quote form\n📞 Call us at +91 7574863100\n📧 Email us at biz@octopuscargocare.com\n\nOur team typically responds within 2 hours with competitive rates!',
                         action: () => showPage('quote')
                     },
                     'Track my shipment': {
-                        text: 'I can help you track your shipment! 📦\n\nTo track your cargo, I\'ll need:\n• Your tracking number or\n• Bill of lading number or\n• Container number\n\nYou can also:\n📞 Call our 24/7 tracking hotline: +91 98765 43210\n📧 Email us with your shipment details\n\nOur system provides real-time updates on your cargo\'s location and estimated delivery time.',
+                        text: 'I can help you track your shipment! 📦\n\nTo track your cargo, I\'ll need:\n• Your tracking number or\n• Bill of lading number or\n• Container number\n\nYou can also:\n📞 Call our 24/7 tracking hotline: +91 7574863100\n📧 Email us with your shipment details\n\nOur system provides real-time updates on your cargo\'s location and estimated delivery time.',
                         action: null
                     },
                     'Port information': {
@@ -3097,7 +3137,7 @@ ${formData.phone}`;
                         action: null
                     },
                     'Contact information': {
-                        text: 'Here\'s how you can reach us! 📞\n\n🏢 **Octopus Supply Chain**\n📍 Manmandir Residency, Chhatdiya Road\n    Rajula, Gujarat, India\n\n📞 **Phone:** +91 98765 43210\n📧 **Email:** info@octopussupplychain.com\n\n🕒 **Business Hours:**\nMon-Sat: 9:00 AM - 6:00 PM\n\n⚡ **24/7 Emergency Support Available**\n🚀 **Average Response Time: 2 hours**',
+                        text: 'Here\'s how you can reach us! 📞\n\n🏢 **Octopus Supply Chain**\n📍 Office no 204, Second floor, Meridian house, Plot no 50, Sector 8, Gandhidham - 370201\n\n📞 **Phone:** +91 7574863100\n📧 **Email:** biz@octopuscargocare.com\n\n🕒 **Business Hours:**\nMon-Sat: 9:00 AM - 6:00 PM\n\n⚡ **24/7 Emergency Support Available**\n🚀 **Average Response Time: 2 hours**',
                         action: () => showPage('contact')
                     },
                     'Our services': {
@@ -3107,7 +3147,7 @@ ${formData.phone}`;
                 };
                 
                 const response = responses[message] || {
-                    text: 'Thank you for your message! 😊\n\nOur logistics experts will get back to you shortly. For immediate assistance:\n\n📞 Call: +91 98765 43210\n📧 Email: info@octopussupplychain.com\n\nIs there anything else I can help you with?',
+                    text: 'Thank you for your message! 😊\n\nOur logistics experts will get back to you shortly. For immediate assistance:\n\n📞 Call: +91 7574863100\n📧 Email: biz@octopuscargocare.com\n\nIs there anything else I can help you with?',
                     action: null
                 };
                 
@@ -3291,5 +3331,65 @@ ${formData.phone}`;
             });
         });
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9989740002167e79',t:'MTc2MjE0NzU0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9989740002167e79',t:'MTc2MjE0NzU0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+<script>
+// Mobile menu toggle
+const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+const navMenu = document.querySelector('.nav-menu');
+
+mobileMenuBtn.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+        navMenu.classList.remove('active');
+    }
+});
+
+// Dropdown menus
+const dropdowns = document.querySelectorAll('.dropdown');
+
+dropdowns.forEach(dropdown => {
+    const link = dropdown.querySelector('a');
+    const menu = dropdown.querySelector('.dropdown-menu');
+    
+    if (window.innerWidth <= 768) {
+        // Mobile behavior
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            menu.classList.toggle('show');
+        });
+    } else {
+        // Desktop behavior
+        dropdown.addEventListener('mouseenter', () => {
+            menu.style.opacity = '1';
+            menu.style.pointerEvents = 'all';
+            menu.style.transform = 'translateY(0)';
+        });
+        
+        dropdown.addEventListener('mouseleave', () => {
+            menu.style.opacity = '0';
+            menu.style.pointerEvents = 'none';
+            menu.style.transform = 'translateY(-10px)';
+        });
+    }
+});
+
+// Update dropdown behavior on window resize
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        navMenu.classList.remove('active');
+        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+            menu.classList.remove('show');
+            menu.style.opacity = '0';
+            menu.style.pointerEvents = 'none';
+            menu.style.transform = 'translateY(-10px)';
+        });
+    }
+});
+</script>
+</body>
 </html>

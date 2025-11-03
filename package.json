@@ -1,0 +1,13 @@
+{
+  "name": "octopusscmapp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fetch-blog": "node ./scripts/fetch_marineinsight.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "node-fetch": "^3.4.0"
+  }
+}

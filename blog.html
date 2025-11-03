@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Octopus Supply Chain</title>
+    <!-- Site icon / favicon -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+    <link rel="shortcut icon" href="assets/favicon.png">
+    <!-- JPEG fallback and apple touch icon -->
+    <link rel="icon" type="image/jpeg" href="assets/octopus%20logo.jpeg">
+    <link rel="apple-touch-icon" href="assets/octopus%20logo.jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --secondary-blue: #3b82f6;
+            --accent-orange: #f59e0b;
+            --dark-blue: #1e3a8a;
+            --light-blue: #dbeafe;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --border-gray: #e5e7eb;
+            --success-green: #10b981;
+            --shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --gradient-primary: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #60a5fa 100%);
+            --gradient-secondary: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--white);
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            box-shadow: var(--shadow-light);
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: padding 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.02);
+        }
+
+        .site-logo {
+            max-height: 72px;
+            width: auto;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+            transition: color 0.3s ease;
+            padding: 0.5rem 0;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-secondary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--gradient-primary);
+            color: var(--white) !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .nav-cta::after {
+            display: none;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .blog-hero {
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 10rem 2rem 6rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .blog-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .blog-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+            animation: slideInDown 1s ease-out;
+        }
+
+        .blog-hero p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            animation: slideInUp 1s ease-out 0.3s both;
+        }
+
+        .blog-container {
+            max-width: 1400px;
+            margin: -4rem auto 4rem;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .blog-card {
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--border-gray);
+            transition: all 0.4s ease;
+            animation: fadeInScale 0.6s ease-out both;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-large);
+            border-color: var(--primary-blue);
+        }
+
+        .blog-content {
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .blog-category {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: var(--white);
+            padding: 0.35rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .blog-card:hover .blog-category {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .blog-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+            transition: color 0.3s ease;
+        }
+
+        .blog-card:hover .blog-title {
+            color: var(--primary-blue);
+        }
+
+        .blog-summary {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .blog-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: auto;
+            padding-top: 1.5rem;
+        }
+
+        .blog-tag {
+            background: var(--light-gray);
+            color: var(--text-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .blog-card:hover .blog-tag {
+            background: var(--light-blue);
+            color: var(--primary-blue);
+        }
+
+        .read-more {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: inherit;
+        }
+
+        .read-more:hover {
+            gap: 0.75rem;
+            color: var(--secondary-blue);
+        }
+
+        .external-blogs-wrap {
+            text-align: center;
+            margin: 2.5rem 0 4rem;
+        }
+
+        .external-blogs-btn {
+            display: inline-block;
+            background: var(--gradient-primary);
+            color: var(--white);
+            padding: 0.85rem 1.6rem;
+            border-radius: 999px;
+            font-weight: 700;
+            box-shadow: var(--shadow-medium);
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .external-blogs-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-large);
+        }
+
+        .blog-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-modal.show {
+            opacity: 1;
+        }
+
+        .blog-modal-content {
+            background: var(--white);
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 3rem;
+            border-radius: 24px;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            box-shadow: var(--shadow-large);
+        }
+
+        .blog-modal.show .blog-modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: var(--light-gray);
+            color: var(--text-dark);
+            transform: rotate(90deg);
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: var(--shadow-large);
+                border-top: 1px solid var(--border-gray);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-menu li {
+                margin: 0.5rem 0;
+            }
+
+            .nav-menu a {
+                display: block;
+                padding: 0.75rem;
+                font-size: 1.1rem;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .blog-hero {
+                padding: 8rem 1.5rem 4rem;
+            }
+
+            .blog-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .blog-hero p {
+                font-size: 1.2rem;
+            }
+
+            .blog-container {
+                padding: 0 1.5rem;
+                margin-top: -2rem;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-modal {
+                padding: 1rem;
+            }
+
+            .blog-modal-content {
+                margin: 1rem;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/octopus logo.jpeg" alt="OctopusSCM" class="site-logo">
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="https://www.linkedin.com/company/octopusscm/jobs/" target="_blank">Careers</a></li>
+                <li><a href="index.html#contact" class="nav-cta">Contact Us</a></li>
+            </ul>
+            <button class="mobile-menu-btn">
+                <span>☰</span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <div class="blog-hero">
+            <h1>Insights & Updates</h1>
+            <p>Discover the latest news, tips, and stories from OctopusSCM</p>
+        </div>
+        <div class="blog-container">
+            <div class="blog-grid" id="blogGrid">
+                <!-- Blog posts will be dynamically inserted here -->
+            </div>
+            <div class="external-blogs-wrap">
+                <a id="externalBlogsBtn" class="external-blogs-btn" href="#" target="_blank" rel="noopener noreferrer">Read more blogs</a>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Blog post modal -->
+    <div class="blog-modal" id="blogModal">
+        <div class="blog-modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize everything when the DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile menu functionality
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            mobileMenuBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                mobileMenuBtn.querySelector('span').textContent = 
+                    navMenu.classList.contains('active') ? '×' : '☰';
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!navMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    navMenu.classList.remove('active');
+                    mobileMenuBtn.querySelector('span').textContent = '☰';
+                }
+            });
+
+            // Load blog posts immediately
+            loadBlogPosts();
+
+            // External blogs URL (replace with your Blogger link)
+            window.BLOG_EXTERNAL_URL = 'https://www.blogger.com/';
+            // Wire the "Read more blogs" button to open the external blog URL
+            const externalBtn = document.getElementById('externalBlogsBtn');
+            if (externalBtn) {
+                externalBtn.href = window.BLOG_EXTERNAL_URL;
+                // If still using placeholder, keep the button visible but non-destructive
+                if (window.BLOG_EXTERNAL_URL === 'https://www.blogger.com/') {
+                    externalBtn.title = 'Replace BLOG_EXTERNAL_URL in the script with your Blogger link';
+                }
+            }
+        });
+
+        // Load and display blog posts
+        async function loadBlogPosts() {
+            const blogGrid = document.getElementById('blogGrid');
+            const SOURCE = 'https://www.marineinsight.com/category/shipping-news/';
+            const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+
+            // Helper to create a card
+            function createCard({ title, date, summary, link, category }, index) {
+                const postElement = document.createElement('article');
+                postElement.className = 'blog-card';
+                postElement.style.animationDelay = `${index * 0.08}s`;
+
+                const displayDate = date ? (new Date(date)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+
+                postElement.innerHTML = `
+                    <div class="blog-content">
+                        <div class="blog-meta">
+                            <span class="blog-category">${category || 'Shipping News'}</span>
+                            <span>${displayDate}</span>
+                        </div>
+                        <h2 class="blog-title">${title}</h2>
+                        <p class="blog-summary">${summary || ''}</p>
+                        <div class="blog-tags"></div>
+                        <a class="read-more" href="${link}" target="_blank" rel="noopener noreferrer">Read More <span>→</span></a>
+                    </div>
+                `;
+
+                blogGrid.appendChild(postElement);
+            }
+
+            // Try to fetch the live MarineInsight category page via a simple CORS proxy.
+            try {
+                const resp = await fetch(CORS_PROXY + encodeURIComponent(SOURCE));
+                if (!resp.ok) throw new Error('Proxy fetch failed');
+                const text = await resp.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+
+                // Attempt common selectors used on the source site
+                const links = [];
+                // Common module selectors
+                const modules = doc.querySelectorAll('.td_module_wrap, .td_module_10, article, .post, .td-block-span6');
+                modules.forEach((m) => {
+                    if (links.length >= 8) return;
+                    const a = m.querySelector('a[href]');
+                    const titleEl = m.querySelector('h3, .entry-title, .td-module-title') || a;
+                    const excerptEl = m.querySelector('.td-excerpt, .entry-summary, .post-excerpt');
+                    if (a && titleEl) {
+                        links.push({
+                            title: titleEl.textContent.trim(),
+                            link: a.href,
+                            summary: excerptEl ? excerptEl.textContent.trim() : ''
+                        });
+                    }
+                });
+
+                // fallback: headings with links
+                if (!links.length) {
+                    const anchors = doc.querySelectorAll('h2 a, h3 a');
+                    anchors.forEach(a => {
+                        if (links.length >= 8) return;
+                        links.push({ title: a.textContent.trim(), link: a.href, summary: '' });
+                    });
+                }
+
+                if (!links.length) throw new Error('No posts found on source');
+
+                // Populate cards (simple, open external article on Read More)
+                links.slice(0, 8).forEach((it, i) => {
+                    createCard({ title: it.title, date: '', summary: it.summary, link: it.link, category: 'Shipping News' }, i);
+                });
+                return;
+            } catch (err) {
+                console.warn('Live fetch failed, falling back to local data/blog.json —', err.message);
+            }
+
+            // Fallback to local JSON if live fetch fails or user blocks CORS proxy
+            try {
+                const response = await fetch('data/blog.json');
+                const data = await response.json();
+                data.posts.forEach((post, index) => {
+                    createCard({ title: post.title, date: post.date, summary: post.summary, link: post.source_link || '#', category: post.category }, index);
+                });
+            } catch (error) {
+                console.error('Error loading fallback blog posts:', error);
+                blogGrid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-light); grid-column: 1/-1;">
+                        <p>Could not load blog posts at this time. Please try again later.</p>
+                    </div>
+                `;
+            }
+            // If after both attempts there are still no posts, show a helpful hint
+            if (blogGrid.children.length === 0) {
+                blogGrid.innerHTML = `
+                    <div style="text-align:center; padding:2rem; color:var(--text-light); grid-column:1/-1;">
+                        <p><strong>No blog posts visible.</strong></p>
+                        <p>For the live feed to work your browser must allow cross-origin fetches. The simplest fix is to serve the site over HTTP locally:</p>
+                        <pre style="background:#f3f4f6;padding:0.75rem;border-radius:8px;display:inline-block;margin-top:0.5rem;">python3 -m http.server 8000</pre>
+                        <p style="margin-top:0.5rem;">Then open <code>http://localhost:8000/blog.html</code>. If you prefer, the page will use local fallback data when available.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Show blog post in modal
+        async function showPost(postId) {
+            try {
+                const response = await fetch('data/blog.json');
+                const data = await response.json();
+                const post = data.posts.find(p => p.id === postId);
+                
+                if (post) {
+                    const postDate = new Date(post.date);
+                    const formattedDate = postDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+
+                    const modalContent = document.getElementById('modalContent');
+                    modalContent.innerHTML = `
+                        <div class="blog-meta">
+                            <span class="blog-category">${post.category}</span>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <h2 class="blog-title">${post.title}</h2>
+                        <p class="blog-meta" style="margin-bottom: 2rem;">By ${post.author}</p>
+                        <div class="blog-content" style="margin-bottom: 2rem;">
+                            ${post.content}
+                        </div>
+                        <div class="blog-tags">
+                            ${post.tags.map(tag => `<span class="blog-tag">${tag}</span>`).join('')}
+                        </div>
+                    `;
+                    
+                    const modal = document.getElementById('blogModal');
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Trigger animation after a micro-task to ensure display: block has taken effect
+                    requestAnimationFrame(() => {
+                        modal.classList.add('show');
+                        modal.querySelector('.blog-modal-content').style.opacity = '1';
+                        modal.querySelector('.blog-modal-content').style.transform = 'translateY(0)';
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading blog post:', error);
+            }
+        }
+
+        // Close modal function
+        function closeModal() {
+            const modal = document.getElementById('blogModal');
+            const modalContent = modal.querySelector('.blog-modal-content');
+            
+            modal.classList.remove('show');
+            modalContent.style.opacity = '0';
+            modalContent.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('blogModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('blogModal')) {
+                closeModal();
+            }
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('blogModal').style.display === 'block') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
