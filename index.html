@@ -44,73 +44,88 @@
             line-height: 1.6;
             color: var(--text-dark);
             background-color: var(--white);
-            overflow-x: hidden;
-        }
+            /* Modern Live Chat Widget (responsive) */
+            .chat-widget {
+                position: fixed;
+                bottom: 1rem;
+                right: 1rem;
+                left: auto;
+                z-index: 2147483647; /* ensure it sits above other elements */
+                -webkit-tap-highlight-color: transparent;
+            }
 
-        html {
-            scroll-behavior: smooth;
-            height: 100%;
-        }
+            .chat-button {
+                background: var(--gradient-secondary);
+                color: var(--white);
+                border: none;
+                border-radius: 9999px;
+                padding: 0.6rem 0.9rem;
+                min-width: 48px;
+                height: 48px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: var(--shadow-large);
+                transition: all 0.18s ease;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                animation: pulse 2.5s infinite;
+                position: relative;
+                touch-action: manipulation;
+            }
 
-        /* Loading Animation */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease-out;
-        }
+            .chat-button .chat-text {
+                display: inline-block;
+                margin-left: 0.5rem;
+                white-space: nowrap;
+            }
 
-        .loading-screen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
+            .chat-badge {
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                background: #ef4444;
+                color: white;
+                border-radius: 50%;
+                min-width: 20px;
+                height: 20px;
+                padding: 0 4px;
+                font-size: 0.7rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                animation: bounce 1s infinite;
+                line-height: 1;
+            }
 
-        .loader {
-            width: 60px;
-            height: 60px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid var(--white);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.03); }
+            }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+                40% { transform: translateY(-4px); }
+                60% { transform: translateY(-2px); }
+            }
 
-        /* Header Styles */
-        .header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-gray);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .header.scrolled {
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.6rem 1.5rem; /* reduced header padding to remove excess white space */
-            transition: padding 0.3s ease;
+            .chat-window {
+                position: fixed; /* fixed to viewport for reliable behavior */
+                bottom: 70px;
+                right: 1rem;
+                width: 380px;
+                height: 520px;
+                background: var(--white);
+                border-radius: 16px;
+                box-shadow: var(--shadow-large);
+                border: 1px solid var(--border-gray);
+                display: none;
+                flex-direction: column;
+                overflow: hidden;
+                z-index: 2147483646;
+            }
         }
 
         .header.scrolled .nav-container {
@@ -1328,8 +1343,9 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            max-height: 280px;
-            min-height: 280px;
+            max-height: calc(100% - 160px);
+            min-height: 120px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .chat-message {
@@ -1660,11 +1676,28 @@
                 font-size: 2rem;
             }
 
+            /* Mobile: make chat a bottom sheet panel */
+            .chat-button .chat-text {
+                display: none; /* hide text and keep icon only to save space */
+            }
+
             .chat-window {
-                width: calc(100% - 2rem);
-                height: 400px;
-                left: 1rem;
-                right: 1rem;
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                height: 70vh;
+                border-radius: 12px 12px 0 0;
+                margin: 0;
+                box-shadow: var(--shadow-large);
+                border-left: 0;
+                border-right: 0;
+            }
+
+            .chat-window .chat-messages {
+                max-height: calc(100% - 140px);
+                min-height: 120px;
             }
         }
 
@@ -2724,38 +2757,49 @@ ${formData.phone}`;
                 // Simulate processing time
                 setTimeout(() => {
                     try {
-                        // Open email client
-                        window.open(mailtoLink, '_blank');
-                        
-                        // Show success message
-                        document.getElementById('quoteSuccess').style.display = 'block';
-                        
-                        // Reset form
-                        form.reset();
-                        
-                        // Reset button
-                        submitBtn.classList.remove('loading');
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = originalText;
-                        
-                        // Hide success message after 5 seconds
-                        setTimeout(() => {
-                            document.getElementById('quoteSuccess').style.display = 'none';
-                        }, 5000);
-                        
-                        // Show success notification
-                        showNotification('Quote request prepared! Your email client should open shortly.', 'success');
-                        
+                        // On mobile devices, prefer using location.href to open the native mail app
+                        const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window && navigator.maxTouchPoints > 0);
+
+                        if (isMobile) {
+                            // Use location.href so the mail client opens directly on mobile
+                            window.location.href = mailtoLink;
+
+                            // Do not reset form immediately on mobile since navigation may interrupt JS execution.
+                            // Leave the submit button state unchanged; user will return after sending or canceling.
+                        } else {
+                            // Desktop: open mail client in new tab/window and show success UI
+                            window.open(mailtoLink, '_blank');
+
+                            // Show success message
+                            document.getElementById('quoteSuccess').style.display = 'block';
+
+                            // Reset form
+                            form.reset();
+
+                            // Reset button
+                            submitBtn.classList.remove('loading');
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalText;
+
+                            // Hide success message after 5 seconds
+                            setTimeout(() => {
+                                document.getElementById('quoteSuccess').style.display = 'none';
+                            }, 5000);
+
+                            // Show success notification
+                            showNotification('Quote request prepared! Your email client should open shortly.', 'success');
+                        }
+
                     } catch (error) {
                         console.error('Error opening email client:', error);
                         showNotification('Unable to open email client. Please copy the contact information manually.', 'error');
-                        
+
                         // Reset button
                         submitBtn.classList.remove('loading');
                         submitBtn.disabled = false;
                         submitBtn.textContent = originalText;
                     }
-                }, 1500);
+                }, 800);
                 
             } catch (error) {
                 console.error('Form submission error:', error);
