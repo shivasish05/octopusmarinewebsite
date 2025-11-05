@@ -2879,57 +2879,105 @@ ${formData.phone}`;
             }
         }
 
-        // Enhanced Contact Form with validation
+        // Enhanced Contact Form: prepare mailto: link and open user's mail client
         function submitContactForm(event) {
             event.preventDefault();
-            
+
             const form = document.getElementById('contactForm');
             const submitBtn = document.getElementById('contactSubmitBtn');
-            const originalText = submitBtn.textContent;
-            
+            const originalText = submitBtn ? submitBtn.textContent : 'Send Message';
+
             // Validate form
             if (!validateForm(form)) {
                 showNotification('Please fill in all required fields correctly.', 'error');
                 return;
             }
-            
-            // Show loading state
-            submitBtn.classList.add('loading');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            
+
+            // Collect values
+            const name = (document.getElementById('contactName') || {}).value || '';
+            const fromEmail = (document.getElementById('contactEmail') || {}).value || '';
+            const company = (document.getElementById('contactCompany') || {}).value || '';
+            const subjectField = (document.getElementById('contactSubject') || {}).value || '';
+            const message = (document.getElementById('contactMessage') || {}).value || '';
+
+            // Compose subject and body
+            const subject = subjectField.trim() || `Website enquiry from ${name || fromEmail || 'visitor'}`;
+            const bodyLines = [
+                `Dear Octopus Supply Chain Team,`,
+                ``,
+                `I would like to get in touch regarding the following:`,
+                ``,
+                `Name: ${name}`,
+                `Company: ${company}`,
+                `Email: ${fromEmail}`,
+                ``,
+                `Message:`,
+                `${message}`,
+                ``,
+                `Please contact me with next steps.`,
+                ``,
+                `Best regards,`,
+                `${name}`
+            ];
+
+            const body = bodyLines.join('\r\n');
+
+            // UI: indicate preparing mail
+            if (submitBtn) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Opening Mail App...';
+            }
+
             try {
-                // Simulate API call
+                const to = (typeof defaultConfig !== 'undefined' && defaultConfig.contact_email) ? defaultConfig.contact_email : 'biz@octopuscargocare.com';
+
+                const mailtoLink = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+                // Small delay to allow UI update
                 setTimeout(() => {
-                    // Show success message
-                    document.getElementById('contactSuccess').style.display = 'block';
-                    
-                    // Reset form
-                    form.reset();
-                    
-                    // Reset button
+                    const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || ('ontouchstart' in window && navigator.maxTouchPoints > 0);
+
+                    try {
+                        if (isMobile) {
+                            // Open mail client on mobile
+                            window.location.href = mailtoLink;
+                            // Don't immediately reset form on mobile
+                        } else {
+                            // Desktop: open draft in new window
+                            window.open(mailtoLink, '_blank');
+
+                            // Show success UI and reset
+                            const successEl = document.getElementById('contactSuccess');
+                            if (successEl) successEl.style.display = 'block';
+                            form.reset();
+                            if (submitBtn) {
+                                submitBtn.classList.remove('loading');
+                                submitBtn.disabled = false;
+                                submitBtn.textContent = originalText;
+                            }
+                            setTimeout(() => { if (successEl) successEl.style.display = 'none'; }, 5000);
+                            showNotification('Your email client should open with a drafted message. Please review and send.', 'success');
+                        }
+                    } catch (err) {
+                        console.error('Error opening mail client:', err);
+                        showNotification('Unable to open email client. Please copy the contact email and send manually.', 'error');
+                        if (submitBtn) {
+                            submitBtn.classList.remove('loading');
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = originalText;
+                        }
+                    }
+                }, 250);
+
+            } catch (error) {
+                console.error('Contact form mailto error:', error);
+                showNotification('Failed to prepare email. Please contact us directly at biz@octopuscargocare.com', 'error');
+                if (submitBtn) {
                     submitBtn.classList.remove('loading');
                     submitBtn.disabled = false;
                     submitBtn.textContent = originalText;
-                    
-                    // Hide success message after 5 seconds
-                    setTimeout(() => {
-                        document.getElementById('contactSuccess').style.display = 'none';
-                    }, 5000);
-                    
-                    // Show success notification
-                    showNotification('Message sent successfully! We\'ll get back to you within 24 hours.', 'success');
-                    
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Contact form error:', error);
-                showNotification('Failed to send message. Please try again or contact us directly.', 'error');
-                
-                // Reset button
-                submitBtn.classList.remove('loading');
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
+                }
             }
         }
 
